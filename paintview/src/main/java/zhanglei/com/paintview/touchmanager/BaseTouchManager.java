@@ -17,8 +17,15 @@ import zhanglei.com.paintview.PaintViewDrawDataManager;
  */
 
 public abstract class BaseTouchManager {
+
     protected PaintView mPaintView;
+
     protected PaintViewDrawDataManager mDataManager;
+
+    protected float downX, downY, preX, preY, curX, curY;//手指触摸屏幕的坐标
+
+    protected int[] location = new int[]{0, 0};
+
 
     protected void attach(PaintView paintView) {
         mPaintView = paintView;
@@ -26,6 +33,10 @@ public abstract class BaseTouchManager {
     }
 
     public void onTouch(MotionEvent event) {
+        if (null == mPaintView || null == mDataManager) return;
+        mPaintView.getLocationInWindow(location); //获取在当前窗口内的绝对坐标
+        curX = event.getRawX() - location[0];
+        curY = event.getRawY() - location[1];
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 mPaintView.setMove(false);
@@ -40,6 +51,8 @@ public abstract class BaseTouchManager {
                 onTouchUp(event);
                 break;
         }
+        preX = curX;
+        preY = curY;
     }
 
     protected abstract void onTouchUp(MotionEvent event);

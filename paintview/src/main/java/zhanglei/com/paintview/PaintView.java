@@ -23,7 +23,6 @@ import java.lang.ref.SoftReference;
 
 import zhanglei.com.paintview.bean.DrawPhotoData;
 import zhanglei.com.paintview.bean.DrawShapeData;
-import zhanglei.com.paintview.bean.TransformData;
 import zhanglei.com.paintview.touchmanager.PaintViewAttacher;
 
 import static zhanglei.com.paintview.DrawTypeEnum.ERASER;
@@ -86,19 +85,9 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
 
     private DrawPhotoData mCurDrawPhoto;//当前图片
 
+    private DrawShapeData mCurSelectShape;//当前几何图形
+
     private Paint mBoardPaint = null;//画图片的边线
-
-    private Bitmap scaleMarkBM = BitmapFactory.decodeResource(getResources(), R.drawable.photo_transform_icon);//缩放图标
-
-    private Bitmap deleteMarkBM = BitmapFactory.decodeResource(getResources(), R.drawable.photo_delect_icon);//删除图标
-
-    private RectF photoScaleRect01 = new RectF(0, 0, scaleMarkBM.getWidth() * 2, scaleMarkBM.getHeight() * 2);//缩放标记边界,矩形大小按照图片原大小2倍
-
-    private RectF photoScaleRect02 = new RectF(0, 0, scaleMarkBM.getWidth() * 2, scaleMarkBM.getHeight() * 2);//缩放标记边界,矩形大小按照图片原大小2倍
-
-    private RectF photoScaleRect03 = new RectF(0, 0, scaleMarkBM.getWidth() * 2, scaleMarkBM.getHeight() * 2);//缩放标记边界,矩形大小按照图片原大小2倍
-
-    private RectF photoDeleteRect = new RectF(0, 0, deleteMarkBM.getWidth(), deleteMarkBM.getHeight());//删除标记边界,矩形大小按照图片原大小
 
     private static final float DEFAULT_PHOTO_HEIGHT = 400.00F;//图片默认显示高度
 
@@ -117,7 +106,7 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
     }
 
     private void init() {
-        mDataManager = new PaintViewDrawDataManager();
+        mDataManager = new PaintViewDrawDataManager(this);
 
         //初始化绘制图形的画笔
         mPaint = new Paint();
@@ -237,7 +226,7 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
      *
      * @param drawPhotoData
      */
-    private void setCurDrawPhoto(DrawPhotoData drawPhotoData) {
+    public void setCurDrawPhoto(DrawPhotoData drawPhotoData) {
         if (null != drawPhotoData) {
             isSelectPhoto = true;
             setCurSelectShape(null);
@@ -264,7 +253,7 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
                 }
             }
             if (!isSelectShape && isSelectPhoto && mCurDrawPhoto != null) {
-                float[] photoCorners = calculateCorners(mCurDrawPhoto);//计算图片四个角点和中心点
+                float[] photoCorners = Util.calculateCorners(mCurDrawPhoto);//计算图片四个角点和中心点
                 drawBoard(canvas, photoCorners);//绘制图形边线
                 drawPhotoMarks(canvas, photoCorners);//绘制边角图片
             }
@@ -296,25 +285,25 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
     private void drawPhotoMarks(Canvas canvas, float[] photoCorners) {
         float x;
         float y;
-        x = photoCorners[0] - photoScaleRect01.width() / 4;
-        y = photoCorners[1] - photoScaleRect01.height() / 4;
-        photoScaleRect01.offsetTo(x, y);//偏移到x,y坐标
-        canvas.drawBitmap(scaleMarkBM, x, y, null);
+        x = photoCorners[0] - mDataManager.photoScaleRect01.width() / 4;
+        y = photoCorners[1] - mDataManager.photoScaleRect01.height() / 4;
+        mDataManager.photoScaleRect01.offsetTo(x, y);//偏移到x,y坐标
+        canvas.drawBitmap(mDataManager.scaleMarkBM, x, y, null);
 
-        x = photoCorners[2] - photoDeleteRect.width() / 2;
-        y = photoCorners[3] - photoDeleteRect.height() / 2;
-        photoDeleteRect.offsetTo(x, y);
-        canvas.drawBitmap(deleteMarkBM, x, y, null);
+        x = photoCorners[2] - mDataManager.photoDeleteRect.width() / 2;
+        y = photoCorners[3] - mDataManager.photoDeleteRect.height() / 2;
+        mDataManager.photoDeleteRect.offsetTo(x, y);
+        canvas.drawBitmap(mDataManager.deleteMarkBM, x, y, null);
 
-        x = photoCorners[4] - photoScaleRect02.width() / 4;
-        y = photoCorners[5] - photoScaleRect02.height() / 4;
-        photoScaleRect02.offsetTo(x, y);//偏移到x,y坐标
-        canvas.drawBitmap(scaleMarkBM, x, y, null);
+        x = photoCorners[4] - mDataManager.photoScaleRect02.width() / 4;
+        y = photoCorners[5] - mDataManager.photoScaleRect02.height() / 4;
+        mDataManager.photoScaleRect02.offsetTo(x, y);//偏移到x,y坐标
+        canvas.drawBitmap(mDataManager.scaleMarkBM, x, y, null);
 
-        x = photoCorners[6] - photoScaleRect03.width() / 4;
-        y = photoCorners[7] - photoScaleRect03.height() / 4;
-        photoScaleRect03.offsetTo(x, y);//偏移到x,y坐标
-        canvas.drawBitmap(scaleMarkBM, x, y, null);
+        x = photoCorners[6] - mDataManager.photoScaleRect03.width() / 4;
+        y = photoCorners[7] - mDataManager.photoScaleRect03.height() / 4;
+        mDataManager.photoScaleRect03.offsetTo(x, y);//偏移到x,y坐标
+        canvas.drawBitmap(mDataManager.scaleMarkBM, x, y, null);
     }
 
     /**
@@ -328,8 +317,17 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
         }
     }
 
-    private void setCurSelectShape(DrawShapeData drawShapeData) {
-
+    public void setCurSelectShape(DrawShapeData drawShapeData) {
+        if (null != drawShapeData) {
+            isSelectShape = true;
+            setCurDrawPhoto(null);
+        } else {
+            isSelectShape = false;
+        }
+        mDataManager.mDrawShapeList.remove(drawShapeData);
+        mDataManager.mDrawShapeList.add(drawShapeData);
+        mCurSelectShape = drawShapeData;
+        invalidate();
     }
 
     /**
@@ -345,6 +343,62 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
                 }
             }
         }
+
+        if (!isSelectPhoto && isSelectShape && mCurSelectShape != null) {
+            float[] photoCorners = Util.calculateCorners(mCurSelectShape);//计算图片四个角点和中心点
+            drawBoard(canvas, photoCorners);//绘制shape边线
+            drawShapeMarks(canvas, photoCorners);//绘制边角图片
+        }
+    }
+
+    /**
+     * 绘制shape边角操作图标
+     *
+     * @param canvas
+     * @param photoCorners
+     */
+    protected void drawShapeMarks(Canvas canvas, float[] photoCorners) {
+        float xLeftTop, yLeftTop, xRightTop, yRightTop, xRightBottom, yRightBottom, xLeftBottom, yLeftBottom;
+        float yMiddleTop, xMiddleTop, xMiddleRight, yMiddleRight, xMiddleBottom, yMiddleBottom, xMidlleLeft, yMiddleLeft;
+        xLeftTop = photoCorners[0] - mDataManager.shapeScaleRect01.width() / 4;
+        yLeftTop = photoCorners[1] - mDataManager.shapeScaleRect01.height() / 4;
+        mDataManager.shapeScaleRect01.offsetTo(xLeftTop, yLeftTop);//偏移到x,y坐标
+        canvas.drawBitmap(mDataManager.scaleMarkBM, xLeftTop, yLeftTop, null);
+
+        xRightTop = photoCorners[2] - mDataManager.shapeDeleteRect.width() / 2;
+        yRightTop = photoCorners[3] - mDataManager.shapeDeleteRect.height() / 2;
+        mDataManager.shapeDeleteRect.offsetTo(xRightTop, yRightTop);
+        canvas.drawBitmap(mDataManager.deleteMarkBM, xRightTop, yRightTop, null);
+
+        xRightBottom = photoCorners[4] - mDataManager.shapeScaleRect02.width() / 4;
+        yRightBottom = photoCorners[5] - mDataManager.shapeScaleRect02.height() / 4;
+        mDataManager.shapeScaleRect02.offsetTo(xRightBottom, yRightBottom);//偏移到x,y坐标
+        canvas.drawBitmap(mDataManager.scaleMarkBM, xRightBottom, yRightBottom, null);
+
+        xLeftBottom = photoCorners[6] - mDataManager.shapeScaleRect03.width() / 4;
+        yLeftBottom = photoCorners[7] - mDataManager.shapeScaleRect03.height() / 4;
+        mDataManager.shapeScaleRect03.offsetTo(xLeftBottom, yLeftBottom);//偏移到x,y坐标
+        canvas.drawBitmap(mDataManager.scaleMarkBM, xLeftBottom, yLeftBottom, null);
+
+        xMiddleTop = (photoCorners[2] + photoCorners[0]) / 2 - mDataManager.shapeScaleRect04.width() / 4;
+        yMiddleTop = (photoCorners[3] + photoCorners[1]) / 2 - mDataManager.shapeScaleRect04.height() / 4;
+        mDataManager.shapeScaleRect04.offsetTo(xMiddleTop, yMiddleTop);
+        canvas.drawBitmap(mDataManager.scaleMarkBM, xMiddleTop, yMiddleTop, null);
+
+        xMiddleRight = (photoCorners[4] + photoCorners[2]) / 2 - mDataManager.shapeScaleRect05.width() / 4;
+        yMiddleRight = (photoCorners[5] + photoCorners[3]) / 2 - mDataManager.shapeScaleRect05.height() / 4;
+        mDataManager.shapeScaleRect05.offsetTo(xMiddleRight, yMiddleRight);
+        canvas.drawBitmap(mDataManager.scaleMarkBM, xMiddleRight, yMiddleRight, null);
+
+        xMiddleBottom = (photoCorners[4] + photoCorners[6]) / 2 - mDataManager.shapeScaleRect06.width() / 4;
+        yMiddleBottom = (photoCorners[5] + photoCorners[7]) / 2 - mDataManager.shapeScaleRect06.height() / 4;
+        mDataManager.shapeScaleRect06.offsetTo(xMiddleBottom, yMiddleBottom);
+        canvas.drawBitmap(mDataManager.scaleMarkBM, xMiddleBottom, yMiddleBottom, null);
+
+        xMidlleLeft = (photoCorners[6] + photoCorners[0]) / 2 - mDataManager.shapeScaleRect07.width() / 4;
+        yMiddleLeft = (photoCorners[7] + photoCorners[1]) / 2 - mDataManager.shapeScaleRect07.height() / 4;
+        mDataManager.shapeScaleRect07.offsetTo(xMidlleLeft, yMiddleLeft);
+        canvas.drawBitmap(mDataManager.scaleMarkBM, xMidlleLeft, yMiddleLeft, null);
     }
 
     /**
@@ -389,30 +443,6 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
         return values[Matrix.MSCALE_X];
     }
 
-    /**
-     * 获取图片编辑框的坐标数组
-     *
-     * @param transformData
-     * @return
-     */
-    private float[] calculateCorners(TransformData transformData) {
-        float[] photoCornersSrc = new float[10];//0,1代表左上角点XY，2,3代表右上角点XY，4,5代表右下角点XY，6,7代表左下角点XY，8,9代表中心点XY
-        float[] photoCorners = new float[10];//0,1代表左上角点XY，2,3代表右上角点XY，4,5代表右下角点XY，6,7代表左下角点XY，8,9代表中心点XY
-        if (transformData == null) return photoCorners;
-        RectF rectF = transformData.mRectSrc;
-        photoCornersSrc[0] = rectF.left;//左上角x
-        photoCornersSrc[1] = rectF.top;//左上角y
-        photoCornersSrc[2] = rectF.right;//右上角x
-        photoCornersSrc[3] = rectF.top;//右上角y
-        photoCornersSrc[4] = rectF.right;
-        photoCornersSrc[5] = rectF.bottom;
-        photoCornersSrc[6] = rectF.left;
-        photoCornersSrc[7] = rectF.bottom;
-        photoCornersSrc[8] = rectF.centerX();
-        photoCornersSrc[9] = rectF.centerY();
-        transformData.mMatrix.mapPoints(photoCorners, photoCornersSrc);
-        return photoCorners;
-    }
 
     /**
      * 获取PaintView的整体截图
@@ -543,6 +573,34 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
 
     public PaintViewDrawDataManager getDrawDataManager() {
         return mDataManager;
+    }
+
+    public DrawPhotoData getCurDrawPhoto() {
+        return mCurDrawPhoto;
+    }
+
+    public DrawShapeData getCurSelectShape() {
+        return mCurSelectShape;
+    }
+
+    public String getTAG() {
+        return TAG;
+    }
+
+    public boolean isSelectPhoto() {
+        return isSelectPhoto;
+    }
+
+    public void setSelectPhoto(boolean selectPhoto) {
+        isSelectPhoto = selectPhoto;
+    }
+
+    public boolean isSelectShape() {
+        return isSelectShape;
+    }
+
+    public void setSelectShape(boolean selectShape) {
+        isSelectShape = selectShape;
     }
 
     //.....................................................各种set/get........................................................

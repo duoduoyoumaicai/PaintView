@@ -65,6 +65,12 @@ public class MainActivity extends AppCompatActivity {
                 openImage();
             }
         });
+        findViewById(R.id.btn_select).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                paintView.setDrawType(DrawTypeEnum.SELECT_STATUS);
+            }
+        });
 
 
     }

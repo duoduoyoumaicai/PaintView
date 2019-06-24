@@ -31,7 +31,7 @@ public class TouchManagerForShape extends BaseTouchManager {
 
     private float endY = 0;
 
-    private static float SCALE_MIN_LEN = 50;//几何图形外接矩形最小宽高尺寸(px)
+    public static float SCALE_MIN_LEN = 50;//几何图形外接矩形最小宽高尺寸(px)
 
     private DrawShapeData mCurDrawShape = new DrawShapeData();//当前画出的shape
 

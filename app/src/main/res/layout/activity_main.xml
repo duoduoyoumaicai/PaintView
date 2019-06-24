@@ -47,6 +47,14 @@
         android:layout_toRightOf="@+id/btn_select_line"
         android:text="添加图片" />
 
+    <Button
+        android:id="@+id/btn_select"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/btn_add_photo"
+        android:text="选择" />
+
+
     <zhanglei.com.paintview.PaintView
         android:id="@+id/paintView"
         android:layout_width="match_parent"

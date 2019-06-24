@@ -6,6 +6,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.Point;
+import android.graphics.PointF;
+import android.graphics.RectF;
 import android.net.Uri;
 import android.os.Build;
 import android.view.Display;
@@ -16,6 +18,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
+import zhanglei.com.paintview.bean.TransformData;
 
 /**
  * 类名称：Util
@@ -57,13 +61,13 @@ public class Util {
         return event.getToolType(0) == MotionEvent.TOOL_TYPE_FINGER;
     }
 
-    public static Point getScreenSize(Context context){
+    public static Point getScreenSize(Context context) {
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
         Point out = new Point();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
             display.getSize(out);
-        }else{
+        } else {
             int width = display.getWidth();
             int height = display.getHeight();
             out.set(width, height);
@@ -139,5 +143,38 @@ public class Util {
         return bitmapImage;
     }
 
+    /**
+     * 获取图片编辑框的坐标数组
+     *
+     * @param transformData
+     * @return
+     */
+    public static float[] calculateCorners(TransformData transformData) {
+        float[] photoCornersSrc = new float[10];//0,1代表左上角点XY，2,3代表右上角点XY，4,5代表右下角点XY，6,7代表左下角点XY，8,9代表中心点XY
+        float[] photoCorners = new float[10];//0,1代表左上角点XY，2,3代表右上角点XY，4,5代表右下角点XY，6,7代表左下角点XY，8,9代表中心点XY
+        if (transformData == null) return photoCorners;
+        RectF rectF = transformData.mRectSrc;
+        photoCornersSrc[0] = rectF.left;//左上角x
+        photoCornersSrc[1] = rectF.top;//左上角y
+        photoCornersSrc[2] = rectF.right;//右上角x
+        photoCornersSrc[3] = rectF.top;//右上角y
+        photoCornersSrc[4] = rectF.right;
+        photoCornersSrc[5] = rectF.bottom;
+        photoCornersSrc[6] = rectF.left;
+        photoCornersSrc[7] = rectF.bottom;
+        photoCornersSrc[8] = rectF.centerX();
+        photoCornersSrc[9] = rectF.centerY();
+        transformData.mMatrix.mapPoints(photoCorners, photoCornersSrc);
+        return photoCorners;
+    }
+
+    /**
+     * 获取p1到p2的线段的长度
+     *
+     * @return
+     */
+    public static double getVectorLength(PointF vector) {
+        return Math.sqrt(vector.x * vector.x + vector.y * vector.y);
+    }
 
 }
