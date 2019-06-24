@@ -8,8 +8,10 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
+import android.graphics.RectF;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -19,10 +21,13 @@ import android.view.ViewTreeObserver;
 import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
 
+import zhanglei.com.paintview.bean.DrawPhotoData;
 import zhanglei.com.paintview.bean.DrawShapeData;
+import zhanglei.com.paintview.bean.TransformData;
 import zhanglei.com.paintview.touchmanager.PaintViewAttacher;
 
 import static zhanglei.com.paintview.DrawTypeEnum.ERASER;
+import static zhanglei.com.paintview.DrawTypeEnum.SELECT_STATUS;
 
 
 /**
@@ -38,6 +43,8 @@ import static zhanglei.com.paintview.DrawTypeEnum.ERASER;
 public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutListener {
 
     private final String TAG = getClass().getSimpleName();
+
+    private Context mContext;
 
     private DrawTypeEnum mDrawType = DrawTypeEnum.PEN;//画板当前的绘制类型
 
@@ -73,6 +80,28 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
 
     private boolean isMove = false;
 
+    private boolean isSelectPhoto;//选择了图片
+
+    private boolean isSelectShape;//选择了几何图形
+
+    private DrawPhotoData mCurDrawPhoto;//当前图片
+
+    private Paint mBoardPaint = null;//画图片的边线
+
+    private Bitmap scaleMarkBM = BitmapFactory.decodeResource(getResources(), R.drawable.photo_transform_icon);//缩放图标
+
+    private Bitmap deleteMarkBM = BitmapFactory.decodeResource(getResources(), R.drawable.photo_delect_icon);//删除图标
+
+    private RectF photoScaleRect01 = new RectF(0, 0, scaleMarkBM.getWidth() * 2, scaleMarkBM.getHeight() * 2);//缩放标记边界,矩形大小按照图片原大小2倍
+
+    private RectF photoScaleRect02 = new RectF(0, 0, scaleMarkBM.getWidth() * 2, scaleMarkBM.getHeight() * 2);//缩放标记边界,矩形大小按照图片原大小2倍
+
+    private RectF photoScaleRect03 = new RectF(0, 0, scaleMarkBM.getWidth() * 2, scaleMarkBM.getHeight() * 2);//缩放标记边界,矩形大小按照图片原大小2倍
+
+    private RectF photoDeleteRect = new RectF(0, 0, deleteMarkBM.getWidth(), deleteMarkBM.getHeight());//删除标记边界,矩形大小按照图片原大小
+
+    private static final float DEFAULT_PHOTO_HEIGHT = 400.00F;//图片默认显示高度
+
     public PaintView(Context context) {
         this(context, null);
     }
@@ -83,6 +112,7 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
 
     public PaintView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        mContext = context;
         init();
     }
 
@@ -99,6 +129,11 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
         mPaint.setStrokeJoin(Paint.Join.ROUND);// 结合方式，平滑
         mPaint.setStrokeWidth(mPaintWidth);// 设置空心边框宽,绘制图形画笔宽度
 
+        mBoardPaint = new Paint();
+        mBoardPaint.setColor(Color.parseColor("#019982"));
+        mBoardPaint.setStrokeWidth(5);
+        mBoardPaint.setStyle(Paint.Style.STROKE);
+
         setRushBitmap(BitmapFactory.decodeResource(getResources(),
                 R.drawable.icon_rush_bg).copy(mConfig, true), (int) mRushPaintWidth);
 
@@ -109,6 +144,7 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
     @Override
     protected void onDraw(Canvas canvas) {
         if (null == mDataManager) return;
+        drawPhoto(canvas);//画添加到画板中的图片
 
         drawTemp(canvas);//画笔移动过程的曲线和几何图形
 
@@ -117,7 +153,6 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
         drawFinalShape(canvas);//画最终几何图形
 
         drawRushIcon(canvas);//绘制橡皮移动过程中的图标
-
     }
 
     @Override
@@ -165,6 +200,124 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
     }
 
     /**
+     * 将Bitmap封装成MCDrawPhoto
+     *
+     * @param sampleBM
+     */
+    public void addPhotoByBitmap(Bitmap sampleBM) {
+        setDrawType(SELECT_STATUS);
+        if (sampleBM != null) {
+            DrawPhotoData newRecord = initDrawPhoto(sampleBM);
+            setCurDrawPhoto(newRecord);
+        }
+    }
+
+    /**
+     * 将图片Bitmap封装成MCDrawPhoto
+     *
+     * @param bitmap
+     * @return
+     */
+    private DrawPhotoData initDrawPhoto(Bitmap bitmap) {
+        final DrawPhotoData drawPhoto = new DrawPhotoData();
+        drawPhoto.bitmap = bitmap;
+        drawPhoto.mRectSrc = new RectF(0, 0, drawPhoto.bitmap.getWidth(), drawPhoto.bitmap.getHeight());
+        drawPhoto.mMatrix = new Matrix();
+        //将图片调整到合适大小
+        final float scale = DEFAULT_PHOTO_HEIGHT / drawPhoto.bitmap.getHeight();
+        drawPhoto.mMatrix.postScale(scale, scale);
+
+        drawPhoto.mMatrix.postTranslate(Util.getScreenSize(mContext).x / 2 - drawPhoto.bitmap.getWidth() * scale / 2,
+                Util.getScreenSize(mContext).y / 2 - drawPhoto.bitmap.getHeight() * scale / 2);
+        return drawPhoto;
+    }
+
+    /**
+     * 设置当前图片
+     *
+     * @param drawPhotoData
+     */
+    private void setCurDrawPhoto(DrawPhotoData drawPhotoData) {
+        if (null != drawPhotoData) {
+            isSelectPhoto = true;
+            setCurSelectShape(null);
+        } else {
+            isSelectPhoto = false;
+        }
+        mDataManager.mDrawPhotoList.remove(drawPhotoData);
+        mDataManager.mDrawPhotoList.add(drawPhotoData);
+        mCurDrawPhoto = drawPhotoData;
+        invalidate();
+    }
+
+
+    /**
+     * 绘制图片和图片的边线所有的内容
+     *
+     * @param canvas
+     */
+    private void drawPhoto(Canvas canvas) {
+        if (mDataManager.mDrawPhotoList != null) {
+            for (DrawPhotoData record : mDataManager.mDrawPhotoList) {
+                if (record != null) {
+                    canvas.drawBitmap(record.bitmap, record.mMatrix, null);
+                }
+            }
+            if (!isSelectShape && isSelectPhoto && mCurDrawPhoto != null) {
+                float[] photoCorners = calculateCorners(mCurDrawPhoto);//计算图片四个角点和中心点
+                drawBoard(canvas, photoCorners);//绘制图形边线
+                drawPhotoMarks(canvas, photoCorners);//绘制边角图片
+            }
+        }
+    }
+
+    /**
+     * 绘制图像边线（由于图形旋转或不一定是矩形，所以用Path绘制边线）
+     *
+     * @param canvas
+     * @param photoCorners
+     */
+    private void drawBoard(Canvas canvas, float[] photoCorners) {
+        Path photoBorderPath = new Path();
+        photoBorderPath.moveTo(photoCorners[0], photoCorners[1]);
+        photoBorderPath.lineTo(photoCorners[2], photoCorners[3]);
+        photoBorderPath.lineTo(photoCorners[4], photoCorners[5]);
+        photoBorderPath.lineTo(photoCorners[6], photoCorners[7]);
+        photoBorderPath.lineTo(photoCorners[0], photoCorners[1]);
+        canvas.drawPath(photoBorderPath, mBoardPaint);
+    }
+
+    /**
+     * 绘制边角操作图标
+     *
+     * @param canvas
+     * @param photoCorners
+     */
+    private void drawPhotoMarks(Canvas canvas, float[] photoCorners) {
+        float x;
+        float y;
+        x = photoCorners[0] - photoScaleRect01.width() / 4;
+        y = photoCorners[1] - photoScaleRect01.height() / 4;
+        photoScaleRect01.offsetTo(x, y);//偏移到x,y坐标
+        canvas.drawBitmap(scaleMarkBM, x, y, null);
+
+        x = photoCorners[2] - photoDeleteRect.width() / 2;
+        y = photoCorners[3] - photoDeleteRect.height() / 2;
+        photoDeleteRect.offsetTo(x, y);
+        canvas.drawBitmap(deleteMarkBM, x, y, null);
+
+        x = photoCorners[4] - photoScaleRect02.width() / 4;
+        y = photoCorners[5] - photoScaleRect02.height() / 4;
+        photoScaleRect02.offsetTo(x, y);//偏移到x,y坐标
+        canvas.drawBitmap(scaleMarkBM, x, y, null);
+
+        x = photoCorners[6] - photoScaleRect03.width() / 4;
+        y = photoCorners[7] - photoScaleRect03.height() / 4;
+        photoScaleRect03.offsetTo(x, y);//偏移到x,y坐标
+        canvas.drawBitmap(scaleMarkBM, x, y, null);
+    }
+
+    /**
      * 画笔移动过程中绘制Path或几何图形
      *
      * @param canvas
@@ -175,14 +328,18 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
         }
     }
 
+    private void setCurSelectShape(DrawShapeData drawShapeData) {
+
+    }
+
     /**
      * 绘制shape和shape的边线所有的内容
      *
      * @param canvas
      */
     private void drawFinalShape(Canvas canvas) {
-        if (mDataManager.drawShapeList != null) {
-            for (DrawShapeData drawShapeData : mDataManager.drawShapeList) {
+        if (mDataManager.mDrawShapeList != null) {
+            for (DrawShapeData drawShapeData : mDataManager.mDrawShapeList) {
                 if (drawShapeData != null) {
                     canvas.drawPath(drawShapeData.drawPath, drawShapeData.paint);
                 }
@@ -233,6 +390,31 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
     }
 
     /**
+     * 获取图片编辑框的坐标数组
+     *
+     * @param transformData
+     * @return
+     */
+    private float[] calculateCorners(TransformData transformData) {
+        float[] photoCornersSrc = new float[10];//0,1代表左上角点XY，2,3代表右上角点XY，4,5代表右下角点XY，6,7代表左下角点XY，8,9代表中心点XY
+        float[] photoCorners = new float[10];//0,1代表左上角点XY，2,3代表右上角点XY，4,5代表右下角点XY，6,7代表左下角点XY，8,9代表中心点XY
+        if (transformData == null) return photoCorners;
+        RectF rectF = transformData.mRectSrc;
+        photoCornersSrc[0] = rectF.left;//左上角x
+        photoCornersSrc[1] = rectF.top;//左上角y
+        photoCornersSrc[2] = rectF.right;//右上角x
+        photoCornersSrc[3] = rectF.top;//右上角y
+        photoCornersSrc[4] = rectF.right;
+        photoCornersSrc[5] = rectF.bottom;
+        photoCornersSrc[6] = rectF.left;
+        photoCornersSrc[7] = rectF.bottom;
+        photoCornersSrc[8] = rectF.centerX();
+        photoCornersSrc[9] = rectF.centerY();
+        transformData.mMatrix.mapPoints(photoCorners, photoCornersSrc);
+        return photoCorners;
+    }
+
+    /**
      * 获取PaintView的整体截图
      *
      * @return
@@ -243,7 +425,6 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
         this.draw(canvas);
         return res;
     }
-
 
     //.....................................................各种set/get........................................................
 

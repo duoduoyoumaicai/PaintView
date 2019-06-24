@@ -5,7 +5,7 @@ import android.graphics.Path;
 import android.util.Log;
 
 /**
- * 类名称：DrawShapeData
+ * 类名称：DrawPathData
  * 类描述：用于记录绘制路径的对象
  * 创建人：lei.zhang
  * 创建时间：on 2019/6/17
@@ -13,7 +13,7 @@ import android.util.Log;
  * 修改时间：
  * 修改备注：
  */
-public class DrawPathData extends BaseTransformData {
+public class DrawPathData extends BaseDrawData {
 
     public Path mPath;
 

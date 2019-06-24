@@ -4,7 +4,6 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import zhanglei.com.paintview.PaintView;
-import zhanglei.com.paintview.Util;
 
 
 /**
@@ -43,7 +42,7 @@ public class PaintViewAttacher implements View.OnTouchListener {
     public boolean onTouch(View v, MotionEvent event) {
         if (mPaintView == null || mPaintView.isInEditMode() || mPaintView.getPaintCanvas() == null
                 || mPaintView.getPaintBitmapRef() == null || mPaintView.getPaintBitmapRef().get() == null
-                || mPaintView.getDrawDataManager() == null || Util.isFinger(event)) {
+                || mPaintView.getDrawDataManager() == null ) {
             return false;
         }
         switch (mPaintView.getDrawType()) {

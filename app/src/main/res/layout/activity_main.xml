@@ -40,6 +40,13 @@
         android:layout_toRightOf="@+id/btn_select_cir"
         android:text="直线" />
 
+    <Button
+        android:id="@+id/btn_add_photo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/btn_select_line"
+        android:text="添加图片" />
+
     <zhanglei.com.paintview.PaintView
         android:id="@+id/paintView"
         android:layout_width="match_parent"

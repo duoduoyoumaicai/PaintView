@@ -1,9 +1,7 @@
 package zhanglei.com.paintview.bean;
 
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.RectF;
 import android.util.Log;
 
 import zhanglei.com.paintview.DrawTypeEnum;
@@ -18,7 +16,7 @@ import zhanglei.com.paintview.DrawTypeEnum;
  * 修改时间：
  * 修改备注：
  */
-public class DrawShapeData extends BaseTransformData {
+public class DrawShapeData extends TransformData {
 
     public DrawTypeEnum drawType;//记录类型
 
@@ -28,10 +26,6 @@ public class DrawShapeData extends BaseTransformData {
 
     public Paint paint;//笔类
 
-    public Matrix matrix = null;//变换图片的Matrix,同时兼职用做判断手指点击位置是否在图片上或几何图形上的作用(逆矩阵判断)
-
-    public RectF RectSrc;
-
     private DrawDataMemento memento;//备忘录
 
     @Override
@@ -39,7 +33,7 @@ public class DrawShapeData extends BaseTransformData {
         Log.e("DrawShapeData", "create Memoto cur restore data instance is " + this.toString());
         memento = new DrawDataMemento(addIndex);
         memento.setDoWhat(doWhat);
-        memento.setStartMatrix(this.matrix);
+        memento.setStartMatrix(this.mMatrix);
         memento.setMcTransformData(this);
 
         return memento;

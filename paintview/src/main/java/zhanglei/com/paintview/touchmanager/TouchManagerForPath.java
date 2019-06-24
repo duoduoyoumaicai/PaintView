@@ -30,7 +30,7 @@ public class TouchManagerForPath extends BaseTouchManager {
         //重置mPath
         mDataManager.mTempPath.reset();
         //将当前的path保存的数据集
-        mDataManager.drawPathList.add(mCurDrawPathData);
+        mDataManager.mDrawPathList.add(mCurDrawPathData);
     }
 
     @Override

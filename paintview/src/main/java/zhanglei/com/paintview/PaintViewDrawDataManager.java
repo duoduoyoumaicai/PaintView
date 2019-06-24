@@ -26,43 +26,43 @@ public class PaintViewDrawDataManager {
 
     public float mCurX, mCurY;//用来做贝塞尔曲线的临时坐标
 
-    public CopyOnWriteArrayList<DrawPhotoData> drawPhotoList;//图片集合
+    public CopyOnWriteArrayList<DrawPhotoData> mDrawPhotoList;//图片集合
 
-    public CopyOnWriteArrayList<DrawShapeData> drawShapeList;//几何图形集合
+    public CopyOnWriteArrayList<DrawShapeData> mDrawShapeList;//几何图形集合
 
-    public CopyOnWriteArrayList<DrawPathData> drawPathList;//用于记录path的集合路径
+    public CopyOnWriteArrayList<DrawPathData> mDrawPathList;//用于记录path的集合路径
 
-    public CopyOnWriteArrayList<DrawDataMemento> undoList;//回退集合,每一步操作就产生一个备忘录,存储到这个集合里
+    public CopyOnWriteArrayList<DrawDataMemento> mUndoList;//回退集合,每一步操作就产生一个备忘录,存储到这个集合里
 
     public PaintViewDrawDataManager() {
         mTempPath = new Path();
-        drawPhotoList = new CopyOnWriteArrayList<>();
-        drawShapeList = new CopyOnWriteArrayList<>();
-        undoList = new CopyOnWriteArrayList<>();
-        drawPathList = new CopyOnWriteArrayList();
+        mDrawPhotoList = new CopyOnWriteArrayList<>();
+        mDrawShapeList = new CopyOnWriteArrayList<>();
+        mUndoList = new CopyOnWriteArrayList<>();
+        mDrawPathList = new CopyOnWriteArrayList();
     }
 
     public void clearAndSetNull() {
         clear();
         mTempPath = null;
-        drawPhotoList = null;
-        drawShapeList = null;
-        undoList = null;
-        drawPathList = null;
+        mDrawPhotoList = null;
+        mDrawShapeList = null;
+        mUndoList = null;
+        mDrawPathList = null;
     }
 
     public void clear() {
-        if (null != drawPhotoList) {
-            drawPhotoList.clear();
+        if (null != mDrawPhotoList) {
+            mDrawPhotoList.clear();
         }
-        if (null != drawShapeList) {
-            drawShapeList.clear();
+        if (null != mDrawShapeList) {
+            mDrawShapeList.clear();
         }
-        if (null != undoList) {
-            undoList.clear();
+        if (null != mUndoList) {
+            mUndoList.clear();
         }
-        if (null != drawPathList) {
-            drawPathList.clear();
+        if (null != mDrawPathList) {
+            mDrawPathList.clear();
         }
     }
 }

@@ -1,7 +1,7 @@
 package zhanglei.com.paintview.bean;
 
 /**
- * 类名称：DrawDataMemento
+ * 类名称：BaseDrawData
  * 类描述：画板数据基类
  * 创建人：lei.zhang
  * 创建时间：on 2019/6/17
@@ -10,7 +10,7 @@ package zhanglei.com.paintview.bean;
  * 修改备注：
  */
 
-public class BaseTransformData {
+public class BaseDrawData {
 
     /**
      * 创建备忘录的方法

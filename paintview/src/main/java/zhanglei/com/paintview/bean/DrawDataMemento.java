@@ -20,7 +20,7 @@ public class DrawDataMemento {
 
     public static final int TRANSFORM = 3;//变换
 
-    private BaseTransformData mcTransformData;//操作了哪个对象
+    private BaseDrawData mcTransformData;//操作了哪个对象
 
     private int doWhat = -1;//本次做了什么操作，默认什么都没做
 
@@ -74,11 +74,11 @@ public class DrawDataMemento {
         this.startMatrix.set(matrix);
     }
 
-    public BaseTransformData getMcTransformData() {
+    public BaseDrawData getMcTransformData() {
         return mcTransformData;
     }
 
-    public void setMcTransformData(BaseTransformData mcTransformData) {
+    public void setMcTransformData(BaseDrawData mcTransformData) {
         this.mcTransformData = mcTransformData;
     }
 

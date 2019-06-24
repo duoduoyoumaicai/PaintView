@@ -39,7 +39,7 @@ public class TouchManagerForShape extends BaseTouchManager {
     @Override
     protected void onTouchUp(MotionEvent event) {
         buildFinalShape(mCurDrawShape);
-        mDataManager.drawShapeList.add(mCurDrawShape);
+        mDataManager.mDrawShapeList.add(mCurDrawShape);
         clearTempShapeData();
     }
 
@@ -62,9 +62,9 @@ public class TouchManagerForShape extends BaseTouchManager {
         mCurDrawShape.drawType = mPaintView.getDrawType();
         mCurDrawShape.drawPath = new Path();
         mCurDrawShape.srcPath = new Path();
-        mCurDrawShape.RectSrc = new RectF(startX, startY, startX, startY);
+        mCurDrawShape.mRectSrc = new RectF(startX, startY, startX, startY);
         mCurDrawShape.paint = new Paint(mPaintView.getPaint());//保存画笔
-        mCurDrawShape.matrix = new Matrix();
+        mCurDrawShape.mMatrix = new Matrix();
     }
 
     /**
@@ -193,17 +193,17 @@ public class TouchManagerForShape extends BaseTouchManager {
             mShape.srcPath.moveTo(finalStartXForLine, finalStartYForLine);
             mShape.srcPath.lineTo(finalEndXForLine, finalEndYForLine);
             mShape.drawPath.set(mShape.srcPath);
-            mShape.RectSrc.set(rectFForLine);
+            mShape.mRectSrc.set(rectFForLine);
         } else if (mPaintView.getDrawType() == DrawTypeEnum.CIRCLE) {
             mShape.srcPath.addOval(rectFForRectOrCircle, Path.Direction.CCW);
             mShape.drawPath.set(mShape.srcPath);
-            mShape.RectSrc.set(rectFForRectOrCircle);
+            mShape.mRectSrc.set(rectFForRectOrCircle);
         } else if (mPaintView.getDrawType() == DrawTypeEnum.RECT) {
             mShape.srcPath.addRect(rectFForRectOrCircle, Path.Direction.CCW);
 //            mShape.drawPath.set(mShape.srcPath);//5.1安卓系统这个方法在操作矩形的时候有bug所以采用new的方式
             mShape.drawPath = null;
             mShape.drawPath = new Path(mShape.srcPath);
-            mShape.RectSrc.set(rectFForRectOrCircle);
+            mShape.mRectSrc.set(rectFForRectOrCircle);
         }
     }
 
