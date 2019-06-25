@@ -324,7 +324,7 @@ public class TouchManagerForSelectStatus extends BaseTouchManager {
     }
 
     /**
-     * 旋转操作(暂时没有开放此功能)
+     * 旋转操作
      */
     private void onRotateAction(TransformData transformData) {
         if (transformData == null) return;

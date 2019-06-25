@@ -359,7 +359,7 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
      */
     protected void drawShapeMarks(Canvas canvas, float[] photoCorners) {
         float xLeftTop, yLeftTop, xRightTop, yRightTop, xRightBottom, yRightBottom, xLeftBottom, yLeftBottom;
-        float yMiddleTop, xMiddleTop, xMiddleRight, yMiddleRight, xMiddleBottom, yMiddleBottom, xMidlleLeft, yMiddleLeft;
+//        float yMiddleTop, xMiddleTop, xMiddleRight, yMiddleRight, xMiddleBottom, yMiddleBottom, xMidlleLeft, yMiddleLeft;
         xLeftTop = photoCorners[0] - mDataManager.shapeScaleRect01.width() / 4;
         yLeftTop = photoCorners[1] - mDataManager.shapeScaleRect01.height() / 4;
         mDataManager.shapeScaleRect01.offsetTo(xLeftTop, yLeftTop);//偏移到x,y坐标
@@ -380,25 +380,26 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
         mDataManager.shapeScaleRect03.offsetTo(xLeftBottom, yLeftBottom);//偏移到x,y坐标
         canvas.drawBitmap(mDataManager.scaleMarkBM, xLeftBottom, yLeftBottom, null);//左下
 
-        xMiddleTop = (photoCorners[2] + photoCorners[0]) / 2 - mDataManager.shapeScaleRect04.width() / 4;
-        yMiddleTop = (photoCorners[3] + photoCorners[1]) / 2 - mDataManager.shapeScaleRect04.height() / 4;
-        mDataManager.shapeScaleRect04.offsetTo(xMiddleTop, yMiddleTop);
-        canvas.drawBitmap(mDataManager.scaleMarkBM, xMiddleTop, yMiddleTop, null);//
-
-        xMiddleRight = (photoCorners[4] + photoCorners[2]) / 2 - mDataManager.shapeScaleRect05.width() / 4;
-        yMiddleRight = (photoCorners[5] + photoCorners[3]) / 2 - mDataManager.shapeScaleRect05.height() / 4;
-        mDataManager.shapeScaleRect05.offsetTo(xMiddleRight, yMiddleRight);
-        canvas.drawBitmap(mDataManager.scaleMarkBM, xMiddleRight, yMiddleRight, null);
-
-        xMiddleBottom = (photoCorners[4] + photoCorners[6]) / 2 - mDataManager.shapeScaleRect06.width() / 4;
-        yMiddleBottom = (photoCorners[5] + photoCorners[7]) / 2 - mDataManager.shapeScaleRect06.height() / 4;
-        mDataManager.shapeScaleRect06.offsetTo(xMiddleBottom, yMiddleBottom);
-        canvas.drawBitmap(mDataManager.scaleMarkBM, xMiddleBottom, yMiddleBottom, null);
-
-        xMidlleLeft = (photoCorners[6] + photoCorners[0]) / 2 - mDataManager.shapeScaleRect07.width() / 4;
-        yMiddleLeft = (photoCorners[7] + photoCorners[1]) / 2 - mDataManager.shapeScaleRect07.height() / 4;
-        mDataManager.shapeScaleRect07.offsetTo(xMidlleLeft, yMiddleLeft);
-        canvas.drawBitmap(mDataManager.scaleMarkBM, xMidlleLeft, yMiddleLeft, null);
+        //几何图形的横向竖向缩放在旋转后感觉很奇怪,暂时将横竖向缩放禁用
+//        xMiddleTop = (photoCorners[2] + photoCorners[0]) / 2 - mDataManager.shapeScaleRect04.width() / 4;
+//        yMiddleTop = (photoCorners[3] + photoCorners[1]) / 2 - mDataManager.shapeScaleRect04.height() / 4;
+//        mDataManager.shapeScaleRect04.offsetTo(xMiddleTop, yMiddleTop);
+//        canvas.drawBitmap(mDataManager.scaleMarkBM, xMiddleTop, yMiddleTop, null);//上中
+//
+//        xMiddleRight = (photoCorners[4] + photoCorners[2]) / 2 - mDataManager.shapeScaleRect05.width() / 4;
+//        yMiddleRight = (photoCorners[5] + photoCorners[3]) / 2 - mDataManager.shapeScaleRect05.height() / 4;
+//        mDataManager.shapeScaleRect05.offsetTo(xMiddleRight, yMiddleRight);
+//        canvas.drawBitmap(mDataManager.scaleMarkBM, xMiddleRight, yMiddleRight, null);//右中
+//
+//        xMiddleBottom = (photoCorners[4] + photoCorners[6]) / 2 - mDataManager.shapeScaleRect06.width() / 4;
+//        yMiddleBottom = (photoCorners[5] + photoCorners[7]) / 2 - mDataManager.shapeScaleRect06.height() / 4;
+//        mDataManager.shapeScaleRect06.offsetTo(xMiddleBottom, yMiddleBottom);
+//        canvas.drawBitmap(mDataManager.scaleMarkBM, xMiddleBottom, yMiddleBottom, null);//下中
+//
+//        xMidlleLeft = (photoCorners[6] + photoCorners[0]) / 2 - mDataManager.shapeScaleRect07.width() / 4;
+//        yMiddleLeft = (photoCorners[7] + photoCorners[1]) / 2 - mDataManager.shapeScaleRect07.height() / 4;
+//        mDataManager.shapeScaleRect07.offsetTo(xMidlleLeft, yMiddleLeft);
+//        canvas.drawBitmap(mDataManager.scaleMarkBM, xMidlleLeft, yMiddleLeft, null);//左中
     }
 
     /**

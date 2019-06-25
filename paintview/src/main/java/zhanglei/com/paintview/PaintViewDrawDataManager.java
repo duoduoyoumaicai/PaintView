@@ -78,7 +78,6 @@ public class PaintViewDrawDataManager {
         rotateMarkBM = BitmapFactory.decodeResource(paintView.getResources(), R.drawable.photo_photo_rotate_icon);
         photoScaleRect01 = new RectF(0, 0, scaleMarkBM.getWidth() * 2, scaleMarkBM.getHeight() * 2);
         photoScaleRect02 = new RectF(0, 0, scaleMarkBM.getWidth() * 2, scaleMarkBM.getHeight() * 2);
-//        photoScaleRect03 = new RectF(0, 0, scaleMarkBM.getWidth() * 2, scaleMarkBM.getHeight() * 2);
         photoRotateRect = new RectF(0, 0, rotateMarkBM.getWidth(), rotateMarkBM.getHeight());
         photoDeleteRect = new RectF(0, 0, deleteMarkBM.getWidth(), deleteMarkBM.getHeight());
         shapeScaleRect01 = new RectF(0, 0, scaleMarkBM.getWidth() * 2, scaleMarkBM.getHeight() * 2);
