@@ -43,29 +43,29 @@ public class PaintViewDrawDataManager {
 
     public Bitmap rotateMarkBM;//旋转图标
 
-    public RectF photoScaleRect01;//缩放标记边界,矩形大小按照图片原大小2倍,左上
+    public RectF photoScaleRectLU;//缩放标记边界,矩形大小按照图片原大小2倍,左上
 
-    public RectF photoScaleRect02;//缩放标记边界,矩形大小按照图片原大小2倍,左下
+    public RectF photoScaleRectLB;//缩放标记边界,矩形大小按照图片原大小2倍,左下
 
-    public RectF photoDeleteRect;//删除标记边界,矩形大小按照图片原大小,右上
+    public RectF photoDeleteRectRU;//删除标记边界,矩形大小按照图片原大小,右上
 
-    public RectF photoRotateRect;//旋转标记边界,矩形大小按照图片原大小,右下
+    public RectF photoRotateRectRB;//旋转标记边界,矩形大小按照图片原大小,右下
 
-    public RectF shapeScaleRect01;//缩放标记边界,矩形大小按照图片原大小2倍,左上
+    public RectF shapeScaleRectLU;//缩放标记边界,矩形大小按照图片原大小2倍,左上
 
-    public RectF shapeRotateRect;//旋转标记边界,矩形大小按照图片原大小,右下
+    public RectF shapeScaleRectUM;//缩放标记边界,上中
 
-    public RectF shapeScaleRect03;//缩放标记边界,矩形大小按照图片原大小2倍,左下
+    public RectF shapeRotateRectRB;//旋转标记边界,矩形大小按照图片原大小,右下
 
-    public RectF shapeScaleRect04;//缩放标记边界,上中
+    public RectF shapeScaleRectLB;//缩放标记边界,矩形大小按照图片原大小2倍,左下
 
-    public RectF shapeScaleRect05;//缩放标记边界,右中
+    public RectF shapeScaleRectRM;//缩放标记边界,右中
 
-    public RectF shapeScaleRect06;//缩放标记边界,下中
+    public RectF shapeScaleRectBM;//缩放标记边界,下中
 
-    public RectF shapeScaleRect07;//缩放标记边界,左中
+    public RectF shapeScaleRectLM;//缩放标记边界,左中
 
-    public RectF shapeDeleteRect;//删除标记边界,矩形大小按照图片原大小,右上
+    public RectF shapeDeleteRectRU;//删除标记边界,矩形大小按照图片原大小,右上
 
     public PaintViewDrawDataManager(PaintView paintView) {
         mTempPath = new Path();
@@ -76,18 +76,18 @@ public class PaintViewDrawDataManager {
         scaleMarkBM = BitmapFactory.decodeResource(paintView.getResources(), R.drawable.photo_transform_icon);
         deleteMarkBM = BitmapFactory.decodeResource(paintView.getResources(), R.drawable.photo_delect_icon);
         rotateMarkBM = BitmapFactory.decodeResource(paintView.getResources(), R.drawable.photo_photo_rotate_icon);
-        photoScaleRect01 = new RectF(0, 0, scaleMarkBM.getWidth() * 2, scaleMarkBM.getHeight() * 2);
-        photoScaleRect02 = new RectF(0, 0, scaleMarkBM.getWidth() * 2, scaleMarkBM.getHeight() * 2);
-        photoRotateRect = new RectF(0, 0, rotateMarkBM.getWidth(), rotateMarkBM.getHeight());
-        photoDeleteRect = new RectF(0, 0, deleteMarkBM.getWidth(), deleteMarkBM.getHeight());
-        shapeScaleRect01 = new RectF(0, 0, scaleMarkBM.getWidth() * 2, scaleMarkBM.getHeight() * 2);
-        shapeRotateRect = new RectF(0, 0, scaleMarkBM.getWidth() * 2, scaleMarkBM.getHeight() * 2);
-        shapeScaleRect03 = new RectF(0, 0, scaleMarkBM.getWidth() * 2, scaleMarkBM.getHeight() * 2);
-        shapeScaleRect04 = new RectF(0, 0, scaleMarkBM.getWidth() * 2, scaleMarkBM.getHeight() * 2);
-        shapeScaleRect05 = new RectF(0, 0, scaleMarkBM.getWidth() * 2, scaleMarkBM.getHeight() * 2);
-        shapeScaleRect06 = new RectF(0, 0, scaleMarkBM.getWidth() * 2, scaleMarkBM.getHeight() * 2);
-        shapeScaleRect07 = new RectF(0, 0, scaleMarkBM.getWidth() * 2, scaleMarkBM.getHeight() * 2);
-        shapeDeleteRect = new RectF(0, 0, deleteMarkBM.getWidth(), deleteMarkBM.getHeight());
+        photoScaleRectLU = new RectF(0, 0, scaleMarkBM.getWidth() * 2, scaleMarkBM.getHeight() * 2);
+        photoScaleRectLB = new RectF(0, 0, scaleMarkBM.getWidth() * 2, scaleMarkBM.getHeight() * 2);
+        photoRotateRectRB = new RectF(0, 0, rotateMarkBM.getWidth(), rotateMarkBM.getHeight());
+        photoDeleteRectRU = new RectF(0, 0, deleteMarkBM.getWidth(), deleteMarkBM.getHeight());
+        shapeScaleRectLU = new RectF(0, 0, scaleMarkBM.getWidth() * 2, scaleMarkBM.getHeight() * 2);
+        shapeRotateRectRB = new RectF(0, 0, rotateMarkBM.getWidth(), rotateMarkBM.getHeight());
+        shapeScaleRectLB = new RectF(0, 0, scaleMarkBM.getWidth() * 2, scaleMarkBM.getHeight() * 2);
+        shapeScaleRectUM = new RectF(0, 0, scaleMarkBM.getWidth() * 2, scaleMarkBM.getHeight() * 2);
+        shapeScaleRectRM = new RectF(0, 0, scaleMarkBM.getWidth() * 2, scaleMarkBM.getHeight() * 2);
+        shapeScaleRectBM = new RectF(0, 0, scaleMarkBM.getWidth() * 2, scaleMarkBM.getHeight() * 2);
+        shapeScaleRectLM = new RectF(0, 0, scaleMarkBM.getWidth() * 2, scaleMarkBM.getHeight() * 2);
+        shapeDeleteRectRU = new RectF(0, 0, deleteMarkBM.getWidth(), deleteMarkBM.getHeight());
     }
 
     public void clearAndSetNull() {

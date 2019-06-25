@@ -285,24 +285,24 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
     private void drawPhotoMarks(Canvas canvas, float[] photoCorners) {
         float x;
         float y;
-        x = photoCorners[0] - mDataManager.photoScaleRect01.width() / 4;
-        y = photoCorners[1] - mDataManager.photoScaleRect01.height() / 4;
-        mDataManager.photoScaleRect01.offsetTo(x, y);//偏移到x,y坐标
+        x = photoCorners[0] - mDataManager.photoScaleRectLU.width() / 4;
+        y = photoCorners[1] - mDataManager.photoScaleRectLU.height() / 4;
+        mDataManager.photoScaleRectLU.offsetTo(x, y);//偏移到x,y坐标
         canvas.drawBitmap(mDataManager.scaleMarkBM, x, y, null);//左上
 
-        x = photoCorners[2] - mDataManager.photoDeleteRect.width() / 2;
-        y = photoCorners[3] - mDataManager.photoDeleteRect.height() / 2;
-        mDataManager.photoDeleteRect.offsetTo(x, y);
+        x = photoCorners[2] - mDataManager.photoDeleteRectRU.width() / 2;
+        y = photoCorners[3] - mDataManager.photoDeleteRectRU.height() / 2;
+        mDataManager.photoDeleteRectRU.offsetTo(x, y);
         canvas.drawBitmap(mDataManager.deleteMarkBM, x, y, null);//右上
 
-        x = photoCorners[4] - mDataManager.photoRotateRect.width() / 2;
-        y = photoCorners[5] - mDataManager.photoRotateRect.height() / 2;
-        mDataManager.photoRotateRect.offsetTo(x, y);//偏移到x,y坐标
+        x = photoCorners[4] - mDataManager.photoRotateRectRB.width() / 2;
+        y = photoCorners[5] - mDataManager.photoRotateRectRB.height() / 2;
+        mDataManager.photoRotateRectRB.offsetTo(x, y);//偏移到x,y坐标
         canvas.drawBitmap(mDataManager.rotateMarkBM, x, y, null);//右下
 
-        x = photoCorners[6] - mDataManager.photoScaleRect02.width() / 4;
-        y = photoCorners[7] - mDataManager.photoScaleRect02.height() / 4;
-        mDataManager.photoScaleRect02.offsetTo(x, y);//偏移到x,y坐标
+        x = photoCorners[6] - mDataManager.photoScaleRectLB.width() / 4;
+        y = photoCorners[7] - mDataManager.photoScaleRectLB.height() / 4;
+        mDataManager.photoScaleRectLB.offsetTo(x, y);//偏移到x,y坐标
         canvas.drawBitmap(mDataManager.scaleMarkBM, x, y, null);//左下
     }
 
@@ -360,45 +360,45 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
     protected void drawShapeMarks(Canvas canvas, float[] photoCorners) {
         float xLeftTop, yLeftTop, xRightTop, yRightTop, xRightBottom, yRightBottom, xLeftBottom, yLeftBottom;
 //        float yMiddleTop, xMiddleTop, xMiddleRight, yMiddleRight, xMiddleBottom, yMiddleBottom, xMidlleLeft, yMiddleLeft;
-        xLeftTop = photoCorners[0] - mDataManager.shapeScaleRect01.width() / 4;
-        yLeftTop = photoCorners[1] - mDataManager.shapeScaleRect01.height() / 4;
-        mDataManager.shapeScaleRect01.offsetTo(xLeftTop, yLeftTop);//偏移到x,y坐标
+        xLeftTop = photoCorners[0] - mDataManager.shapeScaleRectLU.width() / 4;
+        yLeftTop = photoCorners[1] - mDataManager.shapeScaleRectLU.height() / 4;
+        mDataManager.shapeScaleRectLU.offsetTo(xLeftTop, yLeftTop);//偏移到x,y坐标
         canvas.drawBitmap(mDataManager.scaleMarkBM, xLeftTop, yLeftTop, null);//左上
 
-        xRightTop = photoCorners[2] - mDataManager.shapeDeleteRect.width() / 2;
-        yRightTop = photoCorners[3] - mDataManager.shapeDeleteRect.height() / 2;
-        mDataManager.shapeDeleteRect.offsetTo(xRightTop, yRightTop);
+        xRightTop = photoCorners[2] - mDataManager.shapeDeleteRectRU.width() / 2;
+        yRightTop = photoCorners[3] - mDataManager.shapeDeleteRectRU.height() / 2;
+        mDataManager.shapeDeleteRectRU.offsetTo(xRightTop, yRightTop);
         canvas.drawBitmap(mDataManager.deleteMarkBM, xRightTop, yRightTop, null);//右上
 
-        xRightBottom = photoCorners[4] - mDataManager.shapeRotateRect.width() / 2;
-        yRightBottom = photoCorners[5] - mDataManager.shapeRotateRect.height() / 2;
-        mDataManager.shapeRotateRect.offsetTo(xRightBottom, yRightBottom);//偏移到x,y坐标
+        xRightBottom = photoCorners[4] - mDataManager.shapeRotateRectRB.width() / 2;
+        yRightBottom = photoCorners[5] - mDataManager.shapeRotateRectRB.height() / 2;
+        mDataManager.shapeRotateRectRB.offsetTo(xRightBottom, yRightBottom);//偏移到x,y坐标
         canvas.drawBitmap(mDataManager.rotateMarkBM, xRightBottom, yRightBottom, null);//右下
 
-        xLeftBottom = photoCorners[6] - mDataManager.shapeScaleRect03.width() / 4;
-        yLeftBottom = photoCorners[7] - mDataManager.shapeScaleRect03.height() / 4;
-        mDataManager.shapeScaleRect03.offsetTo(xLeftBottom, yLeftBottom);//偏移到x,y坐标
+        xLeftBottom = photoCorners[6] - mDataManager.shapeScaleRectLB.width() / 4;
+        yLeftBottom = photoCorners[7] - mDataManager.shapeScaleRectLB.height() / 4;
+        mDataManager.shapeScaleRectLB.offsetTo(xLeftBottom, yLeftBottom);//偏移到x,y坐标
         canvas.drawBitmap(mDataManager.scaleMarkBM, xLeftBottom, yLeftBottom, null);//左下
 
         //几何图形的横向竖向缩放在旋转后感觉很奇怪,暂时将横竖向缩放禁用
-//        xMiddleTop = (photoCorners[2] + photoCorners[0]) / 2 - mDataManager.shapeScaleRect04.width() / 4;
-//        yMiddleTop = (photoCorners[3] + photoCorners[1]) / 2 - mDataManager.shapeScaleRect04.height() / 4;
-//        mDataManager.shapeScaleRect04.offsetTo(xMiddleTop, yMiddleTop);
+//        xMiddleTop = (photoCorners[2] + photoCorners[0]) / 2 - mDataManager.shapeScaleRectUM.width() / 4;
+//        yMiddleTop = (photoCorners[3] + photoCorners[1]) / 2 - mDataManager.shapeScaleRectUM.height() / 4;
+//        mDataManager.shapeScaleRectUM.offsetTo(xMiddleTop, yMiddleTop);
 //        canvas.drawBitmap(mDataManager.scaleMarkBM, xMiddleTop, yMiddleTop, null);//上中
 //
-//        xMiddleRight = (photoCorners[4] + photoCorners[2]) / 2 - mDataManager.shapeScaleRect05.width() / 4;
-//        yMiddleRight = (photoCorners[5] + photoCorners[3]) / 2 - mDataManager.shapeScaleRect05.height() / 4;
-//        mDataManager.shapeScaleRect05.offsetTo(xMiddleRight, yMiddleRight);
+//        xMiddleRight = (photoCorners[4] + photoCorners[2]) / 2 - mDataManager.shapeScaleRectRM.width() / 4;
+//        yMiddleRight = (photoCorners[5] + photoCorners[3]) / 2 - mDataManager.shapeScaleRectRM.height() / 4;
+//        mDataManager.shapeScaleRectRM.offsetTo(xMiddleRight, yMiddleRight);
 //        canvas.drawBitmap(mDataManager.scaleMarkBM, xMiddleRight, yMiddleRight, null);//右中
 //
-//        xMiddleBottom = (photoCorners[4] + photoCorners[6]) / 2 - mDataManager.shapeScaleRect06.width() / 4;
-//        yMiddleBottom = (photoCorners[5] + photoCorners[7]) / 2 - mDataManager.shapeScaleRect06.height() / 4;
-//        mDataManager.shapeScaleRect06.offsetTo(xMiddleBottom, yMiddleBottom);
+//        xMiddleBottom = (photoCorners[4] + photoCorners[6]) / 2 - mDataManager.shapeScaleRectBM.width() / 4;
+//        yMiddleBottom = (photoCorners[5] + photoCorners[7]) / 2 - mDataManager.shapeScaleRectBM.height() / 4;
+//        mDataManager.shapeScaleRectBM.offsetTo(xMiddleBottom, yMiddleBottom);
 //        canvas.drawBitmap(mDataManager.scaleMarkBM, xMiddleBottom, yMiddleBottom, null);//下中
 //
-//        xMidlleLeft = (photoCorners[6] + photoCorners[0]) / 2 - mDataManager.shapeScaleRect07.width() / 4;
-//        yMiddleLeft = (photoCorners[7] + photoCorners[1]) / 2 - mDataManager.shapeScaleRect07.height() / 4;
-//        mDataManager.shapeScaleRect07.offsetTo(xMidlleLeft, yMiddleLeft);
+//        xMidlleLeft = (photoCorners[6] + photoCorners[0]) / 2 - mDataManager.shapeScaleRectLM.width() / 4;
+//        yMiddleLeft = (photoCorners[7] + photoCorners[1]) / 2 - mDataManager.shapeScaleRectLM.height() / 4;
+//        mDataManager.shapeScaleRectLM.offsetTo(xMidlleLeft, yMiddleLeft);
 //        canvas.drawBitmap(mDataManager.scaleMarkBM, xMidlleLeft, yMiddleLeft, null);//左中
     }
 
