@@ -66,6 +66,10 @@ paintView.setDrawType(DrawTypeEnum.LINE);
 ```
  paintView.clear();
 ```
+* 获取画板截图
+```
+ paintView.getPaintViewScreen();
+```
 * 不再使用PaintView的时候别忘了资源回收,可以在Activity的onDestroy方法调用
 ```
  paintView.destroy();
