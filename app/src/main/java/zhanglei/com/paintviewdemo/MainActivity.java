@@ -16,9 +16,10 @@ import zhanglei.com.paintview.DrawTypeEnum;
 import zhanglei.com.paintview.PaintView;
 import zhanglei.com.paintview.Util;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements IPaintColorOrWidthListener {
     private PaintView paintView;
     private final int PHOTO = 0x100;
+    private ToolbarColorSelectPopupWindow colorSelectPopup;
 
 
     @Override
@@ -27,7 +28,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         paintView = findViewById(R.id.paintView);
-
+        colorSelectPopup = new ToolbarColorSelectPopupWindow(this);
+        colorSelectPopup.setPaintColorOrWidthListener(this);
 
         findViewById(R.id.btn_select_eraser).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,7 +79,12 @@ public class MainActivity extends AppCompatActivity {
                 paintView.clear();
             }
         });
-
+        findViewById(R.id.btn_select_color).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                colorSelectPopup.showPopupWindow(v);
+            }
+        });
 
     }
 
@@ -112,4 +119,22 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onColorChanged(int paintColor) {
+        paintView.setPaintColor(paintColor);
+    }
+
+    @Override
+    public void onPaintWidthChanged(DrawStrokeEnum drawStrokeEnum) {
+        paintView.setPaintWidth(drawStrokeEnum.getPenStroke());
+        paintView.setRushPaintWidth(drawStrokeEnum.getEraserStroke());
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (null != paintView) {
+            paintView.destroy();
+        }
+    }
 }

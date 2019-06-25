@@ -537,8 +537,8 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
 
     public void setPaintWidth(float paintWidth) {
         this.mPaintWidth = paintWidth;
-        if (mPaint != null) {
-            mPaint.setStrokeWidth(paintWidth);
+        if (getDrawType() != ERASER) {
+            mPaint.setStrokeWidth(mPaintWidth);
         }
     }
 
@@ -548,9 +548,12 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
 
     public void setRushPaintWidth(float rushPaintWidth) {
         this.mRushPaintWidth = rushPaintWidth;
-        if (mPaint != null) {
+        if (getDrawType() == ERASER) {
             mPaint.setStrokeWidth(rushPaintWidth);
         }
+        //改变橡皮图标的大小
+        setRushBitmap(BitmapFactory.decodeResource(getResources(),
+                R.drawable.icon_rush_bg).copy(mConfig, true), (int) rushPaintWidth);
     }
 
     /**
@@ -660,6 +663,22 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
         }
         if (null != mDataManager) {
             mDataManager.clearAndSetNull();
+        }
+        recycleAllBitmap();
+    }
+
+    /**
+     * 回收所有的bitmap
+     */
+    private void recycleAllBitmap() {
+        mPaintCanvas = null;
+        if (mPaintBitmapRef != null) {
+            mPaintBitmapRef.clear();
+            mPaintBitmapRef = null;
+        }
+        if (mRushIconBitmap != null) {
+            mRushIconBitmap.recycle();
+            mRushIconBitmap = null;
         }
     }
 

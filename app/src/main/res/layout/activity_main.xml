@@ -5,67 +5,76 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-
-    <Button
-        android:id="@+id/btn_select_paint"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="画笔" />
-
-    <Button
-        android:id="@+id/btn_select_eraser"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/btn_select_paint"
-        android:text="橡皮" />
-
-    <Button
-        android:id="@+id/btn_select_rec"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/btn_select_eraser"
-        android:text="矩形" />
-
-    <Button
-        android:id="@+id/btn_select_cir"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/btn_select_rec"
-        android:text="圆" />
-
-    <Button
-        android:id="@+id/btn_select_line"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/btn_select_cir"
-        android:text="直线" />
-
-    <Button
-        android:id="@+id/btn_add_photo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/btn_select_line"
-        android:text="添加图片" />
-
-    <Button
-        android:id="@+id/btn_select"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/btn_add_photo"
-        android:text="选择" />
-
-    <Button
-        android:id="@+id/btn_clear"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/btn_select"
-        android:text="清空" />
-
-
     <zhanglei.com.paintview.PaintView
         android:id="@+id/paintView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/btn_select_eraser" />
+        android:layout_height="match_parent" />
+
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/btn_select_paint"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="画笔" />
+
+            <Button
+                android:id="@+id/btn_select_color"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="选色/笔粗" />
+
+            <Button
+                android:id="@+id/btn_select_eraser"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="橡皮" />
+
+            <Button
+                android:id="@+id/btn_select_rec"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="矩形" />
+
+            <Button
+                android:id="@+id/btn_select_cir"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="圆" />
+
+            <Button
+                android:id="@+id/btn_select_line"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="直线" />
+
+            <Button
+                android:id="@+id/btn_add_photo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="添加图片" />
+
+            <Button
+                android:id="@+id/btn_select"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="选择" />
+
+            <Button
+                android:id="@+id/btn_clear"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="清空" />
+
+        </LinearLayout>
+
+    </ScrollView>
 
 </RelativeLayout>
