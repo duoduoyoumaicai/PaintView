@@ -444,6 +444,46 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
         return values[Matrix.MSCALE_X];
     }
 
+    public void clear() {
+        mDataManager.clear();
+        renewPaintView();
+        invalidate();
+    }
+
+    /**
+     * 重新创建空的画板/清空画板
+     */
+    public void renewPaintView() {
+        if (getPaintBitmapWidth() == 0) {
+            return;
+        }
+
+        if (mPaintBitmapRef != null && mPaintBitmapRef.get() != null) {
+            if (mPaintCanvas == null) {
+                try {
+                    mPaintCanvas = new Canvas(mPaintBitmapRef.get());
+                } catch (Exception e) {
+                    Log.e(TAG, "mPaintBitmapRef.get() == null");
+                }
+            }
+            if (mPaintCanvas != null)
+                mPaintCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+        } else {
+            Bitmap bitmap = Bitmap.createBitmap(getPaintBitmapWidth(), getPaintBitmapHeight(), mConfig);
+            if (null == mPaintBitmapRef) {
+                mPaintBitmapRef = new SoftReference<>(bitmap);
+            } else {
+                mPaintBitmapRef.clear();
+                mPaintBitmapRef = new SoftReference<>(bitmap);
+            }
+            try {
+                mPaintCanvas = new Canvas(mPaintBitmapRef.get());
+            } catch (Exception e) {
+                Log.e(TAG, "mPaintBitmapRef.get() == null");
+            }
+        }
+    }
+
 
     /**
      * 获取PaintView的整体截图
@@ -590,6 +630,20 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
 
     public void setSelectShape(boolean selectShape) {
         isSelectShape = selectShape;
+    }
+
+    /**
+     * 得到画板可绘制宽度
+     */
+    public int getPaintBitmapWidth() {
+        return mWidth;
+    }
+
+    /**
+     * 得到画板可绘制高度
+     */
+    public int getPaintBitmapHeight() {
+        return mHeight;
     }
 
     //.....................................................各种set/get........................................................

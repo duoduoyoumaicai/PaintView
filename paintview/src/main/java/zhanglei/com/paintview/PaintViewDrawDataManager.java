@@ -100,6 +100,7 @@ public class PaintViewDrawDataManager {
     }
 
     public void clear() {
+
         if (null != mDrawPhotoList) {
             mDrawPhotoList.clear();
         }

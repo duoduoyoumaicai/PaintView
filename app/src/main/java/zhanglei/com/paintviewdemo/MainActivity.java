@@ -71,6 +71,12 @@ public class MainActivity extends AppCompatActivity {
                 paintView.setDrawType(DrawTypeEnum.SELECT_STATUS);
             }
         });
+        findViewById(R.id.btn_clear).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                paintView.clear();
+            }
+        });
 
 
     }

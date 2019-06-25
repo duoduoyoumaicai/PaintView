@@ -54,6 +54,13 @@
         android:layout_toRightOf="@+id/btn_add_photo"
         android:text="选择" />
 
+    <Button
+        android:id="@+id/btn_clear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/btn_select"
+        android:text="清空" />
+
 
     <zhanglei.com.paintview.PaintView
         android:id="@+id/paintView"
