@@ -5,13 +5,14 @@
 # 使用方式
 Project的build.gradle文件中加上
 
-```allprojects {
-        repositories {
-            ...
-            maven { url 'https://jitpack.io' }
-        }
-    }```
-  
+```
+allprojects {
+    repositories {
+        ...
+        maven { url 'https://jitpack.io' }
+    }
+}
+```
   Module的build.gradle文件中加上
   
   implementation 'com.github.duoduoyoumaicai:PaintView:1.0'
