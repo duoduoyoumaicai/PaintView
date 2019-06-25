@@ -26,6 +26,7 @@ import zhanglei.com.paintview.bean.DrawShapeData;
 import zhanglei.com.paintview.touchmanager.PaintViewAttacher;
 
 import static zhanglei.com.paintview.DrawTypeEnum.ERASER;
+import static zhanglei.com.paintview.DrawTypeEnum.PEN;
 import static zhanglei.com.paintview.DrawTypeEnum.SELECT_STATUS;
 
 
@@ -445,6 +446,11 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
     }
 
     public void clear() {
+        isSelectPhoto = false;
+        isSelectShape = false;
+        mCurDrawPhoto = null;
+        mCurSelectShape = null;
+        setDrawType(PEN);
         mDataManager.clear();
         renewPaintView();
         invalidate();
