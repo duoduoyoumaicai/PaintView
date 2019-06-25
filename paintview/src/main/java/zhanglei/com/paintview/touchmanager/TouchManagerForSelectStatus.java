@@ -108,7 +108,6 @@ public class TouchManagerForSelectStatus extends BaseTouchManager {
     public boolean isInMarkRect(float[] downPoint) {
         //1.判断是否在当前选中shape缩放图标区域内
         if (mDataManager.shapeScaleRect01.contains(downPoint[0], (int) downPoint[1])
-                || mDataManager.shapeScaleRect02.contains(downPoint[0], (int) downPoint[1])
                 || mDataManager.shapeScaleRect03.contains(downPoint[0], (int) downPoint[1])) {
             actionMode = SHAPE_ACTION_SCALE;
             return true;
@@ -116,16 +115,14 @@ public class TouchManagerForSelectStatus extends BaseTouchManager {
 
         //几何图形，判断是否上下缩放
         if (mDataManager.shapeScaleRect04.contains(downPoint[0], downPoint[1])
-                || mDataManager.shapeScaleRect06.contains(downPoint[0], downPoint[1])
-                ) {
+                || mDataManager.shapeScaleRect06.contains(downPoint[0], downPoint[1])) {
             actionMode = SHAPE_ACTION_SCALE_VERTICAL;
             return true;
         }
 
         //几何图形，是否左右缩放
         if (mDataManager.shapeScaleRect05.contains(downPoint[0], downPoint[1])
-                || mDataManager.shapeScaleRect07.contains(downPoint[0], downPoint[1])
-                ) {
+                || mDataManager.shapeScaleRect07.contains(downPoint[0], downPoint[1])) {
             actionMode = SHAPE_ACTION_SCALE_HORIZONTAL;
             return true;
         }
@@ -140,8 +137,7 @@ public class TouchManagerForSelectStatus extends BaseTouchManager {
         }
         //3.判断是否在当前选中图片缩放图标区域内
         if (mDataManager.photoScaleRect01.contains(downPoint[0], (int) downPoint[1])
-                || mDataManager.photoScaleRect02.contains(downPoint[0], (int) downPoint[1])
-                || mDataManager.photoScaleRect03.contains(downPoint[0], (int) downPoint[1])) {
+                || mDataManager.photoScaleRect02.contains(downPoint[0], (int) downPoint[1])) {
             actionMode = PHOTO_ACTION_SCALE;
             return true;
         }
@@ -151,6 +147,16 @@ public class TouchManagerForSelectStatus extends BaseTouchManager {
             mPaintView.setCurDrawPhoto(null);
             actionMode = ACTION_NONE;
             mPaintView.setSelectPhoto(false);
+            return true;
+        }
+        //5.判断是否在当前选中图片旋转图标区域内
+        if (mDataManager.photoRotateRect.contains(downPoint[0], (int) downPoint[1])) {
+            actionMode = PHOTO_ACTION_ROTATE;
+            return true;
+        }
+        //6.判断是否在当前选中shape旋转图标区域内
+        if (mDataManager.shapeRotateRect.contains(downPoint[0], (int) downPoint[1])) {
+            actionMode = SHAPE_ACTION_ROTATE;
             return true;
         }
         return false;

@@ -41,29 +41,31 @@ public class PaintViewDrawDataManager {
 
     public Bitmap deleteMarkBM;//删除图标
 
-    public RectF photoScaleRect01;//缩放标记边界,矩形大小按照图片原大小2倍
+    public Bitmap rotateMarkBM;//旋转图标
 
-    public RectF photoScaleRect02;//缩放标记边界,矩形大小按照图片原大小2倍
+    public RectF photoScaleRect01;//缩放标记边界,矩形大小按照图片原大小2倍,左上
 
-    public RectF photoScaleRect03;//缩放标记边界,矩形大小按照图片原大小2倍
+    public RectF photoScaleRect02;//缩放标记边界,矩形大小按照图片原大小2倍,左下
 
-    public RectF photoDeleteRect;//删除标记边界,矩形大小按照图片原大小
+    public RectF photoDeleteRect;//删除标记边界,矩形大小按照图片原大小,右上
 
-    public RectF shapeScaleRect01;//缩放标记边界,矩形大小按照图片原大小2倍
+    public RectF photoRotateRect;//旋转标记边界,矩形大小按照图片原大小,右下
 
-    public RectF shapeScaleRect02;//缩放标记边界,矩形大小按照图片原大小2倍
+    public RectF shapeScaleRect01;//缩放标记边界,矩形大小按照图片原大小2倍,左上
 
-    public RectF shapeScaleRect03;//缩放标记边界,矩形大小按照图片原大小2倍
+    public RectF shapeRotateRect;//旋转标记边界,矩形大小按照图片原大小,右下
 
-    public RectF shapeScaleRect04;//缩放标记边界,中上
+    public RectF shapeScaleRect03;//缩放标记边界,矩形大小按照图片原大小2倍,左下
 
-    public RectF shapeScaleRect05;//缩放标记边界,中右
+    public RectF shapeScaleRect04;//缩放标记边界,上中
 
-    public RectF shapeScaleRect06;//缩放标记边界,中下
+    public RectF shapeScaleRect05;//缩放标记边界,右中
 
-    public RectF shapeScaleRect07;//缩放标记边界,中左
+    public RectF shapeScaleRect06;//缩放标记边界,下中
 
-    public RectF shapeDeleteRect;//删除标记边界,矩形大小按照图片原大小
+    public RectF shapeScaleRect07;//缩放标记边界,左中
+
+    public RectF shapeDeleteRect;//删除标记边界,矩形大小按照图片原大小,右上
 
     public PaintViewDrawDataManager(PaintView paintView) {
         mTempPath = new Path();
@@ -73,12 +75,14 @@ public class PaintViewDrawDataManager {
         mDrawPathList = new CopyOnWriteArrayList();
         scaleMarkBM = BitmapFactory.decodeResource(paintView.getResources(), R.drawable.photo_transform_icon);
         deleteMarkBM = BitmapFactory.decodeResource(paintView.getResources(), R.drawable.photo_delect_icon);
+        rotateMarkBM = BitmapFactory.decodeResource(paintView.getResources(), R.drawable.photo_photo_rotate_icon);
         photoScaleRect01 = new RectF(0, 0, scaleMarkBM.getWidth() * 2, scaleMarkBM.getHeight() * 2);
         photoScaleRect02 = new RectF(0, 0, scaleMarkBM.getWidth() * 2, scaleMarkBM.getHeight() * 2);
-        photoScaleRect03 = new RectF(0, 0, scaleMarkBM.getWidth() * 2, scaleMarkBM.getHeight() * 2);
+//        photoScaleRect03 = new RectF(0, 0, scaleMarkBM.getWidth() * 2, scaleMarkBM.getHeight() * 2);
+        photoRotateRect = new RectF(0, 0, rotateMarkBM.getWidth(), rotateMarkBM.getHeight());
         photoDeleteRect = new RectF(0, 0, deleteMarkBM.getWidth(), deleteMarkBM.getHeight());
         shapeScaleRect01 = new RectF(0, 0, scaleMarkBM.getWidth() * 2, scaleMarkBM.getHeight() * 2);
-        shapeScaleRect02 = new RectF(0, 0, scaleMarkBM.getWidth() * 2, scaleMarkBM.getHeight() * 2);
+        shapeRotateRect = new RectF(0, 0, scaleMarkBM.getWidth() * 2, scaleMarkBM.getHeight() * 2);
         shapeScaleRect03 = new RectF(0, 0, scaleMarkBM.getWidth() * 2, scaleMarkBM.getHeight() * 2);
         shapeScaleRect04 = new RectF(0, 0, scaleMarkBM.getWidth() * 2, scaleMarkBM.getHeight() * 2);
         shapeScaleRect05 = new RectF(0, 0, scaleMarkBM.getWidth() * 2, scaleMarkBM.getHeight() * 2);

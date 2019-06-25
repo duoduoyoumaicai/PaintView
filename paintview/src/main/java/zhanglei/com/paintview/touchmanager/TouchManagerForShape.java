@@ -38,6 +38,10 @@ public class TouchManagerForShape extends BaseTouchManager {
 
     @Override
     protected void onTouchUp(MotionEvent event) {
+        Rect rect = getVisibleRect();
+        endX = Math.max(Math.min(event.getX(), rect.right), rect.left);
+        endY = Math.max(Math.min(event.getY(), rect.bottom), rect.top);
+        event.setLocation(endX, endY);
         buildFinalShape(mCurDrawShape);
         mDataManager.mDrawShapeList.add(mCurDrawShape);
         clearTempShapeData();
