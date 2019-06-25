@@ -3,7 +3,7 @@
 * 可以绘制曲线、橡皮擦功能（可以擦除曲线）、直线、矩形、圆、添加图片
 * 可以对直线、矩形、圆、图片进行移动缩放旋转
 
-<img src="https://github.com/duoduoyoumaicai/picture/blob/master/paintview_readme.jpg" style="zoom:30%">
+<img src="https://github.com/duoduoyoumaicai/picture/blob/master/paintview_readme.jpg" width="30%">
 
 # 如何集成
 Project的build.gradle文件中加上
