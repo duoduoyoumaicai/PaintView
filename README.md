@@ -2,6 +2,7 @@
 * 一个很好用的绘图板
 * 可以绘制曲线、橡皮擦功能（可以擦除曲线）、直线、矩形、圆、添加图片
 * 可以对直线、矩形、圆、图片进行移动缩放旋转
+
 ！[image]（https://github.com/duoduoyoumaicai/picture/blob/master/paintview_readme/paintview_readme.jpg）
 
 # 如何集成
