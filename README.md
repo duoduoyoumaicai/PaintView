@@ -31,31 +31,31 @@ allprojects {
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 ```
-* 选择画笔模式,可以自由涂鸦
+* 设置为画笔模式,可以自由涂鸦
 ```
 paintView.setDrawType(DrawTypeEnum.PEN);
 ```
-* 选择橡皮模式,可以擦除自由涂鸦的曲线
+* 设置为橡皮模式,可以擦除自由涂鸦的曲线
 ```
 paintView.setDrawType(DrawTypeEnum.ERASER);
 ```
-* 选择矩形模式,可以绘制矩形
+* 设置为矩形模式,可以绘制矩形
 ```
 paintView.setDrawType(DrawTypeEnum.RECT);
 ```
-* 选择圆模式,可以绘制椭圆
+* 设置为圆模式,可以绘制椭圆
 ```
 paintView.setDrawType(DrawTypeEnum.CIRCLE);
 ```
-* 选择直线模式,可以绘制直线
+* 设置为直线模式,可以绘制直线
 ```
 paintView.setDrawType(DrawTypeEnum.LINE);
 ```
-* 选择画笔颜色
+* 设置为画笔颜色
 ```
  paintView.setPaintColor(paintColor);//paintColor类型为Color
 ```
-* 选择画笔/橡皮粗细
+* 设置为画笔/橡皮粗细
 ```
  paintView.setPaintWidth(2);
  paintView.setRushPaintWidth(30);
@@ -63,6 +63,10 @@ paintView.setDrawType(DrawTypeEnum.LINE);
 * 添加图片
 ```
  paintView.addPhotoByBitmap(bitmap);
+```
+* 设置为选择模式,这个模式可以选择几何图形和图片,对他们进行移动缩放旋转
+```
+ paintView.setDrawType(DrawTypeEnum.SELECT_STATUS);
 ```
 * 清空画板
 ```
