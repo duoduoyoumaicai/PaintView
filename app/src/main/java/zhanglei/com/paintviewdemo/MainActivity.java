@@ -85,6 +85,15 @@ public class MainActivity extends AppCompatActivity implements IPaintColorOrWidt
                 colorSelectPopup.showPopupWindow(v);
             }
         });
+        findViewById(R.id.btn_get_picture).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bitmap bitmap = paintView.getPaintViewScreen();
+                if (paintView != null && null != bitmap) {
+                    paintView.addPhotoByBitmap(bitmap);
+                }
+            }
+        });
 
     }
 

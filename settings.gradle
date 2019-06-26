@@ -1,1 +1,1 @@
-include ':app', ':paintview'
+include ':app' , ':paintview'
