@@ -42,7 +42,7 @@ public class PaintViewAttacher implements View.OnTouchListener {
     public boolean onTouch(View v, MotionEvent event) {
         if (mPaintView == null || mPaintView.isInEditMode() || mPaintView.getPaintCanvas() == null
                 || mPaintView.getPaintBitmapRef() == null || mPaintView.getPaintBitmapRef().get() == null
-                || mPaintView.getDrawDataManager() == null ) {
+                || mPaintView.getDrawDataContainer() == null ) {
             return false;
         }
         switch (mPaintView.getDrawType()) {

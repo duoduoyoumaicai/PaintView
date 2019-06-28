@@ -14,7 +14,7 @@ import zhanglei.com.paintview.bean.DrawShapeData;
 
 
 /**
- * 类名称：PaintViewDrawDataManager
+ * 类名称：PaintViewDrawDataContainer
  * 类描述：负责管理PaintView绘制数据管理,存储所有的绘制数据
  * 创建人：lei.zhang
  * 创建时间：on 2019/6/17
@@ -23,9 +23,11 @@ import zhanglei.com.paintview.bean.DrawShapeData;
  * 修改备注：
  */
 
-public class PaintViewDrawDataManager {
+public class PaintViewDrawDataContainer {
 
     public Path mTempPath;
+
+    public int curIndex = -1;//当前undoList的index索引,记录操作步骤
 
     public float mCurX, mCurY;//用来做贝塞尔曲线的临时坐标
 
@@ -67,7 +69,7 @@ public class PaintViewDrawDataManager {
 
     public RectF shapeDeleteRectRU;//删除标记边界,矩形大小按照图片原大小,右上
 
-    public PaintViewDrawDataManager(PaintView paintView) {
+    public PaintViewDrawDataContainer(PaintView paintView) {
         mTempPath = new Path();
         mDrawPhotoList = new CopyOnWriteArrayList<>();
         mDrawShapeList = new CopyOnWriteArrayList<>();

@@ -43,18 +43,18 @@ public class TouchManagerForShape extends BaseTouchManager {
         endY = Math.max(Math.min(event.getY(), rect.bottom), rect.top);
         event.setLocation(endX, endY);
         buildFinalShape(mCurDrawShape);
-        mDataManager.mDrawShapeList.add(mCurDrawShape);
+        mDataContainer.mDrawShapeList.add(mCurDrawShape);
         clearTempShapeData();
     }
 
     @Override
     protected void onTouchMove(MotionEvent event) {
-        mDataManager.mTempPath.reset();//画笔轨迹清空
+        mDataContainer.mTempPath.reset();//画笔轨迹清空
         Rect rect = getVisibleRect();
         endX = Math.max(Math.min(event.getX(), rect.right), rect.left);
         endY = Math.max(Math.min(event.getY(), rect.bottom), rect.top);
         event.setLocation(endX, endY);
-        buildTempShape(mDataManager.mTempPath);
+        buildTempShape(mDataContainer.mTempPath);
     }
 
     @Override
@@ -216,7 +216,7 @@ public class TouchManagerForShape extends BaseTouchManager {
         startY = 0;
         endX = 0;
         endY = 0;
-        mDataManager.mTempPath.reset();
+        mDataContainer.mTempPath.reset();
     }
 
     private Rect getVisibleRect() {

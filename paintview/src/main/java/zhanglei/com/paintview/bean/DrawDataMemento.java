@@ -30,15 +30,15 @@ public class DrawDataMemento {
 
     public float[] oldCorners = new float[10];//几何图形变换的外接矩形坐标
 
-    public DrawDataMemento(AddIndex addIndex) {
-        this.addIndex = addIndex;
-        this.addIndex.addIndex();
-        this.addIndex = null;
+    public DrawDataMemento(onAddIndexListener onAddIndexListener) {
+        this.onAddIndexListener = onAddIndexListener;
+        this.onAddIndexListener.addIndex();//创建一条备忘录就调用一次addIndex()
+        this.onAddIndexListener = null;
     }
 
-    private AddIndex addIndex;
+    private onAddIndexListener onAddIndexListener;
 
-    public interface AddIndex {
+    public interface onAddIndexListener {
         void addIndex();
     }
 

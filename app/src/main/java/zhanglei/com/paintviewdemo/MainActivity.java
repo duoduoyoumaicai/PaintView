@@ -94,6 +94,18 @@ public class MainActivity extends AppCompatActivity implements IPaintColorOrWidt
                 }
             }
         });
+        findViewById(R.id.iv_undo).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                paintView.undo();
+            }
+        });
+        findViewById(R.id.iv_redo).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                paintView.redo();
+            }
+        });
 
     }
 

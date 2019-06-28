@@ -19,7 +19,7 @@ public class TransformData extends BaseDrawData {
     public RectF mRectSrc;
 
     @Override
-    protected DrawDataMemento createDrawDataMemento(int doWhat, DrawDataMemento.AddIndex addIndex) {
-        return super.createDrawDataMemento(doWhat, addIndex);
+    protected DrawDataMemento createDrawDataMemento(int doWhat, DrawDataMemento.onAddIndexListener onAddIndexListener) {
+        return super.createDrawDataMemento(doWhat, onAddIndexListener);
     }
 }

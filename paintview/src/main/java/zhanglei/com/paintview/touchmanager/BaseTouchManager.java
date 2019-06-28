@@ -3,7 +3,7 @@ package zhanglei.com.paintview.touchmanager;
 import android.view.MotionEvent;
 
 import zhanglei.com.paintview.PaintView;
-import zhanglei.com.paintview.PaintViewDrawDataManager;
+import zhanglei.com.paintview.PaintViewDrawDataContainer;
 
 
 /**
@@ -20,7 +20,7 @@ public abstract class BaseTouchManager {
 
     protected PaintView mPaintView;
 
-    protected PaintViewDrawDataManager mDataManager;
+    protected PaintViewDrawDataContainer mDataContainer;
 
     protected float downX, downY, preX, preY, curX, curY;//手指触摸屏幕的坐标
 
@@ -29,11 +29,11 @@ public abstract class BaseTouchManager {
 
     protected void attach(PaintView paintView) {
         mPaintView = paintView;
-        mDataManager = paintView.getDrawDataManager();
+        mDataContainer = paintView.getDrawDataContainer();
     }
 
     public void onTouch(MotionEvent event) {
-        if (null == mPaintView || null == mDataManager) return;
+        if (null == mPaintView || null == mDataContainer) return;
         mPaintView.getLocationInWindow(location); //获取在当前窗口内的绝对坐标
         curX = event.getRawX() - location[0];
         curY = event.getRawY() - location[1];
@@ -62,7 +62,7 @@ public abstract class BaseTouchManager {
     protected abstract void onTouchDown(MotionEvent event);
 
     public void detach() {
-        mDataManager = null;
+        mDataContainer = null;
         mPaintView = null;
     }
 }

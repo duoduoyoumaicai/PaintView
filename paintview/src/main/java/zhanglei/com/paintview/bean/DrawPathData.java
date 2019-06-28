@@ -19,13 +19,15 @@ public class DrawPathData extends BaseDrawData {
 
     public Paint mPaint;
 
-    public DrawPathData() {
+    public DrawPathData(Path path, Paint paint) {
+        this.mPath = new Path(path);
+        this.mPaint = new Paint(paint);
     }
 
     @Override
-    public DrawDataMemento createDrawDataMemento(int doWhat, DrawDataMemento.AddIndex addIndex) {
+    public DrawDataMemento createDrawDataMemento(int doWhat, DrawDataMemento.onAddIndexListener onAddIndexListener) {
         Log.e("DrawPathData", "create Memoto cur restore data instance is " + this.toString());
-        DrawDataMemento memento = new DrawDataMemento(addIndex);
+        DrawDataMemento memento = new DrawDataMemento(onAddIndexListener);
         memento.setMcTransformData(this);
         return memento;
     }

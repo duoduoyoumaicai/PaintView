@@ -99,6 +99,7 @@ public class TouchManagerForSelectStatus extends BaseTouchManager {
         }
     }
 
+
     /**
      * 判断是否点到缩放删除等操作图标，然后做出对应的响应
      *
@@ -107,55 +108,55 @@ public class TouchManagerForSelectStatus extends BaseTouchManager {
      */
     public boolean isInMarkRect(float[] downPoint) {
         //1.判断是否在当前选中shape缩放图标区域内
-        if (mDataManager.shapeScaleRectLU.contains(downPoint[0], (int) downPoint[1])
-                || mDataManager.shapeScaleRectLB.contains(downPoint[0], (int) downPoint[1])) {
+        if (mDataContainer.shapeScaleRectLU.contains(downPoint[0], (int) downPoint[1])
+                || mDataContainer.shapeScaleRectLB.contains(downPoint[0], (int) downPoint[1])) {
             actionMode = SHAPE_ACTION_SCALE;
             return true;
         }
 
         //几何图形，判断是否上下缩放
-        if (mDataManager.shapeScaleRectUM.contains(downPoint[0], downPoint[1])
-                || mDataManager.shapeScaleRectBM.contains(downPoint[0], downPoint[1])) {
+        if (mDataContainer.shapeScaleRectUM.contains(downPoint[0], downPoint[1])
+                || mDataContainer.shapeScaleRectBM.contains(downPoint[0], downPoint[1])) {
             actionMode = SHAPE_ACTION_SCALE_VERTICAL;
             return true;
         }
 
         //几何图形，是否左右缩放
-        if (mDataManager.shapeScaleRectRM.contains(downPoint[0], downPoint[1])
-                || mDataManager.shapeScaleRectLM.contains(downPoint[0], downPoint[1])) {
+        if (mDataContainer.shapeScaleRectRM.contains(downPoint[0], downPoint[1])
+                || mDataContainer.shapeScaleRectLM.contains(downPoint[0], downPoint[1])) {
             actionMode = SHAPE_ACTION_SCALE_HORIZONTAL;
             return true;
         }
 
         //2.判断是否在当前选中shape删除图标区域内，如果在就做shape删除操作
-        if (mDataManager.shapeDeleteRectRU.contains(downPoint[0], (int) downPoint[1])) {
-            mDataManager.mDrawShapeList.remove(mPaintView.getCurSelectShape());
+        if (mDataContainer.shapeDeleteRectRU.contains(downPoint[0], (int) downPoint[1])) {
+            mDataContainer.mDrawShapeList.remove(mPaintView.getCurSelectShape());
             mPaintView.setCurSelectShape(null);
             actionMode = ACTION_NONE;
             mPaintView.setSelectShape(false);
             return true;
         }
         //3.判断是否在当前选中图片缩放图标区域内
-        if (mDataManager.photoScaleRectLU.contains(downPoint[0], (int) downPoint[1])
-                || mDataManager.photoScaleRectLB.contains(downPoint[0], (int) downPoint[1])) {
+        if (mDataContainer.photoScaleRectLU.contains(downPoint[0], (int) downPoint[1])
+                || mDataContainer.photoScaleRectLB.contains(downPoint[0], (int) downPoint[1])) {
             actionMode = PHOTO_ACTION_SCALE;
             return true;
         }
         //4.判断是否在当前选中图片删除图标区域内，如果在就做图片删除操作
-        if (mDataManager.photoDeleteRectRU.contains(downPoint[0], (int) downPoint[1])) {
-            mDataManager.mDrawPhotoList.remove(mPaintView.getCurDrawPhoto());
+        if (mDataContainer.photoDeleteRectRU.contains(downPoint[0], (int) downPoint[1])) {
+            mDataContainer.mDrawPhotoList.remove(mPaintView.getCurDrawPhoto());
             mPaintView.setCurDrawPhoto(null);
             actionMode = ACTION_NONE;
             mPaintView.setSelectPhoto(false);
             return true;
         }
         //5.判断是否在当前选中图片旋转图标区域内
-        if (mDataManager.photoRotateRectRB.contains(downPoint[0], (int) downPoint[1])) {
+        if (mDataContainer.photoRotateRectRB.contains(downPoint[0], (int) downPoint[1])) {
             actionMode = PHOTO_ACTION_ROTATE;
             return true;
         }
         //6.判断是否在当前选中shape旋转图标区域内
-        if (mDataManager.shapeRotateRectRB.contains(downPoint[0], (int) downPoint[1])) {
+        if (mDataContainer.shapeRotateRectRB.contains(downPoint[0], (int) downPoint[1])) {
             actionMode = SHAPE_ACTION_ROTATE;
             return true;
         }
@@ -177,8 +178,8 @@ public class TouchManagerForSelectStatus extends BaseTouchManager {
 
         //2.遍历shape集合看看选中了哪个shape
         DrawShapeData clickShape = null;
-        for (int i = mDataManager.mDrawShapeList.size() - 1; i >= 0; i--) {
-            DrawShapeData drawShapeData = mDataManager.mDrawShapeList.get(i);
+        for (int i = mDataContainer.mDrawShapeList.size() - 1; i >= 0; i--) {
+            DrawShapeData drawShapeData = mDataContainer.mDrawShapeList.get(i);
             if (isInRect(drawShapeData, downPoint)) {
                 clickShape = drawShapeData;
                 break;
@@ -199,8 +200,8 @@ public class TouchManagerForSelectStatus extends BaseTouchManager {
         //4.遍历图片集合看看选中了哪个图片
         DrawPhotoData clickPhoto = null;
         //如果没有选中当前图片就循环判断所有的图片看看选中了哪一个
-        for (int i = mDataManager.mDrawPhotoList.size() - 1; i >= 0; i--) {
-            DrawPhotoData drawPhotoData = mDataManager.mDrawPhotoList.get(i);
+        for (int i = mDataContainer.mDrawPhotoList.size() - 1; i >= 0; i--) {
+            DrawPhotoData drawPhotoData = mDataContainer.mDrawPhotoList.get(i);
             if (isInRect(drawPhotoData, downPoint)) {
                 clickPhoto = drawPhotoData;
                 break;

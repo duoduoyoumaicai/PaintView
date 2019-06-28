@@ -19,9 +19,9 @@ public class DrawPhotoData extends TransformData {
     private DrawDataMemento memento;
 
     @Override
-    public DrawDataMemento createDrawDataMemento(int doWhat, DrawDataMemento.AddIndex addIndex) {
+    public DrawDataMemento createDrawDataMemento(int doWhat, DrawDataMemento.onAddIndexListener onAddIndexListener) {
         Log.e("DrawPhotoData", "create Memoto cur restore data instance is " + this.toString());
-        memento = new DrawDataMemento(addIndex);
+        memento = new DrawDataMemento(onAddIndexListener);
         memento.setDoWhat(doWhat);
         memento.setStartMatrix(this.mMatrix);
         memento.setMcTransformData(this);

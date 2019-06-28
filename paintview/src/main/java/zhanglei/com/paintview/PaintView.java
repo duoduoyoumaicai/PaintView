@@ -74,7 +74,7 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
 
     private Bitmap.Config mConfig = Bitmap.Config.ARGB_4444;
 
-    private PaintViewDrawDataManager mDataManager;
+    private PaintViewDrawDataContainer mDataContainer;
 
     private PaintViewAttacher mPaintViewAttacher;//处理PaintView的触摸事件
 
@@ -84,13 +84,15 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
 
     private boolean isSelectShape;//选择了几何图形
 
-    private DrawPhotoData mCurDrawPhoto;//当前图片
+    private DrawPhotoData mCurSelectPhoto;//当前选中的图片
 
-    private DrawShapeData mCurSelectShape;//当前几何图形
+    private DrawShapeData mCurSelectShape;//当前选中的几何图形
 
     private Paint mBoardPaint = null;//画图片的边线
 
     private static final float DEFAULT_PHOTO_HEIGHT = 400.00F;//图片默认显示高度
+
+    private DrawStepControler mDrawStepControler;
 
     public PaintView(Context context) {
         this(context, null);
@@ -107,7 +109,8 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
     }
 
     private void init() {
-        mDataManager = new PaintViewDrawDataManager(this);
+        mDataContainer = new PaintViewDrawDataContainer(this);
+        mDrawStepControler = new DrawStepControler(this);
 
         //初始化绘制图形的画笔
         mPaint = new Paint();
@@ -133,7 +136,7 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
 
     @Override
     protected void onDraw(Canvas canvas) {
-        if (null == mDataManager) return;
+        if (null == mDataContainer) return;
         drawPhoto(canvas);//画添加到画板中的图片
 
         drawTemp(canvas);//画笔移动过程的曲线和几何图形
@@ -234,9 +237,9 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
         } else {
             isSelectPhoto = false;
         }
-        mDataManager.mDrawPhotoList.remove(drawPhotoData);
-        mDataManager.mDrawPhotoList.add(drawPhotoData);
-        mCurDrawPhoto = drawPhotoData;
+        mDataContainer.mDrawPhotoList.remove(drawPhotoData);
+        mDataContainer.mDrawPhotoList.add(drawPhotoData);
+        mCurSelectPhoto = drawPhotoData;
         invalidate();
     }
 
@@ -247,14 +250,14 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
      * @param canvas
      */
     private void drawPhoto(Canvas canvas) {
-        if (mDataManager.mDrawPhotoList != null) {
-            for (DrawPhotoData record : mDataManager.mDrawPhotoList) {
+        if (mDataContainer.mDrawPhotoList != null) {
+            for (DrawPhotoData record : mDataContainer.mDrawPhotoList) {
                 if (record != null) {
                     canvas.drawBitmap(record.bitmap, record.mMatrix, null);
                 }
             }
-            if (!isSelectShape && isSelectPhoto && mCurDrawPhoto != null) {
-                float[] photoCorners = Util.calculateCorners(mCurDrawPhoto);//计算图片四个角点和中心点
+            if (!isSelectShape && isSelectPhoto && mCurSelectPhoto != null) {
+                float[] photoCorners = Util.calculateCorners(mCurSelectPhoto);//计算图片四个角点和中心点
                 drawBoard(canvas, photoCorners);//绘制图形边线
                 drawPhotoMarks(canvas, photoCorners);//绘制边角图片
             }
@@ -286,25 +289,25 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
     private void drawPhotoMarks(Canvas canvas, float[] photoCorners) {
         float x;
         float y;
-        x = photoCorners[0] - mDataManager.photoScaleRectLU.width() / 4;
-        y = photoCorners[1] - mDataManager.photoScaleRectLU.height() / 4;
-        mDataManager.photoScaleRectLU.offsetTo(x, y);//偏移到x,y坐标
-        canvas.drawBitmap(mDataManager.scaleMarkBM, x, y, null);//左上
+        x = photoCorners[0] - mDataContainer.photoScaleRectLU.width() / 4;
+        y = photoCorners[1] - mDataContainer.photoScaleRectLU.height() / 4;
+        mDataContainer.photoScaleRectLU.offsetTo(x, y);//偏移到x,y坐标
+        canvas.drawBitmap(mDataContainer.scaleMarkBM, x, y, null);//左上
 
-        x = photoCorners[2] - mDataManager.photoDeleteRectRU.width() / 2;
-        y = photoCorners[3] - mDataManager.photoDeleteRectRU.height() / 2;
-        mDataManager.photoDeleteRectRU.offsetTo(x, y);
-        canvas.drawBitmap(mDataManager.deleteMarkBM, x, y, null);//右上
+        x = photoCorners[2] - mDataContainer.photoDeleteRectRU.width() / 2;
+        y = photoCorners[3] - mDataContainer.photoDeleteRectRU.height() / 2;
+        mDataContainer.photoDeleteRectRU.offsetTo(x, y);
+        canvas.drawBitmap(mDataContainer.deleteMarkBM, x, y, null);//右上
 
-        x = photoCorners[4] - mDataManager.photoRotateRectRB.width() / 2;
-        y = photoCorners[5] - mDataManager.photoRotateRectRB.height() / 2;
-        mDataManager.photoRotateRectRB.offsetTo(x, y);//偏移到x,y坐标
-        canvas.drawBitmap(mDataManager.rotateMarkBM, x, y, null);//右下
+        x = photoCorners[4] - mDataContainer.photoRotateRectRB.width() / 2;
+        y = photoCorners[5] - mDataContainer.photoRotateRectRB.height() / 2;
+        mDataContainer.photoRotateRectRB.offsetTo(x, y);//偏移到x,y坐标
+        canvas.drawBitmap(mDataContainer.rotateMarkBM, x, y, null);//右下
 
-        x = photoCorners[6] - mDataManager.photoScaleRectLB.width() / 4;
-        y = photoCorners[7] - mDataManager.photoScaleRectLB.height() / 4;
-        mDataManager.photoScaleRectLB.offsetTo(x, y);//偏移到x,y坐标
-        canvas.drawBitmap(mDataManager.scaleMarkBM, x, y, null);//左下
+        x = photoCorners[6] - mDataContainer.photoScaleRectLB.width() / 4;
+        y = photoCorners[7] - mDataContainer.photoScaleRectLB.height() / 4;
+        mDataContainer.photoScaleRectLB.offsetTo(x, y);//偏移到x,y坐标
+        canvas.drawBitmap(mDataContainer.scaleMarkBM, x, y, null);//左下
     }
 
     /**
@@ -313,8 +316,8 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
      * @param canvas
      */
     private void drawTemp(Canvas canvas) {
-        if (mDataManager.mTempPath != null && !mDataManager.mTempPath.isEmpty() && mDrawType != ERASER) {
-            canvas.drawPath(mDataManager.mTempPath, mPaint);
+        if (mDataContainer.mTempPath != null && !mDataContainer.mTempPath.isEmpty() && mDrawType != ERASER) {
+            canvas.drawPath(mDataContainer.mTempPath, mPaint);
         }
     }
 
@@ -325,8 +328,8 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
         } else {
             isSelectShape = false;
         }
-        mDataManager.mDrawShapeList.remove(drawShapeData);
-        mDataManager.mDrawShapeList.add(drawShapeData);
+        mDataContainer.mDrawShapeList.remove(drawShapeData);
+        mDataContainer.mDrawShapeList.add(drawShapeData);
         mCurSelectShape = drawShapeData;
         invalidate();
     }
@@ -337,8 +340,8 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
      * @param canvas
      */
     private void drawFinalShape(Canvas canvas) {
-        if (mDataManager.mDrawShapeList != null) {
-            for (DrawShapeData drawShapeData : mDataManager.mDrawShapeList) {
+        if (mDataContainer.mDrawShapeList != null) {
+            for (DrawShapeData drawShapeData : mDataContainer.mDrawShapeList) {
                 if (drawShapeData != null) {
                     canvas.drawPath(drawShapeData.drawPath, drawShapeData.paint);
                 }
@@ -361,46 +364,46 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
     protected void drawShapeMarks(Canvas canvas, float[] photoCorners) {
         float xLeftTop, yLeftTop, xRightTop, yRightTop, xRightBottom, yRightBottom, xLeftBottom, yLeftBottom;
 //        float yMiddleTop, xMiddleTop, xMiddleRight, yMiddleRight, xMiddleBottom, yMiddleBottom, xMidlleLeft, yMiddleLeft;
-        xLeftTop = photoCorners[0] - mDataManager.shapeScaleRectLU.width() / 4;
-        yLeftTop = photoCorners[1] - mDataManager.shapeScaleRectLU.height() / 4;
-        mDataManager.shapeScaleRectLU.offsetTo(xLeftTop, yLeftTop);//偏移到x,y坐标
-        canvas.drawBitmap(mDataManager.scaleMarkBM, xLeftTop, yLeftTop, null);//左上
+        xLeftTop = photoCorners[0] - mDataContainer.shapeScaleRectLU.width() / 4;
+        yLeftTop = photoCorners[1] - mDataContainer.shapeScaleRectLU.height() / 4;
+        mDataContainer.shapeScaleRectLU.offsetTo(xLeftTop, yLeftTop);//偏移到x,y坐标
+        canvas.drawBitmap(mDataContainer.scaleMarkBM, xLeftTop, yLeftTop, null);//左上
 
-        xRightTop = photoCorners[2] - mDataManager.shapeDeleteRectRU.width() / 2;
-        yRightTop = photoCorners[3] - mDataManager.shapeDeleteRectRU.height() / 2;
-        mDataManager.shapeDeleteRectRU.offsetTo(xRightTop, yRightTop);
-        canvas.drawBitmap(mDataManager.deleteMarkBM, xRightTop, yRightTop, null);//右上
+        xRightTop = photoCorners[2] - mDataContainer.shapeDeleteRectRU.width() / 2;
+        yRightTop = photoCorners[3] - mDataContainer.shapeDeleteRectRU.height() / 2;
+        mDataContainer.shapeDeleteRectRU.offsetTo(xRightTop, yRightTop);
+        canvas.drawBitmap(mDataContainer.deleteMarkBM, xRightTop, yRightTop, null);//右上
 
-        xRightBottom = photoCorners[4] - mDataManager.shapeRotateRectRB.width() / 2;
-        yRightBottom = photoCorners[5] - mDataManager.shapeRotateRectRB.height() / 2;
-        mDataManager.shapeRotateRectRB.offsetTo(xRightBottom, yRightBottom);//偏移到x,y坐标
-        canvas.drawBitmap(mDataManager.rotateMarkBM, xRightBottom, yRightBottom, null);//右下
+        xRightBottom = photoCorners[4] - mDataContainer.shapeRotateRectRB.width() / 2;
+        yRightBottom = photoCorners[5] - mDataContainer.shapeRotateRectRB.height() / 2;
+        mDataContainer.shapeRotateRectRB.offsetTo(xRightBottom, yRightBottom);//偏移到x,y坐标
+        canvas.drawBitmap(mDataContainer.rotateMarkBM, xRightBottom, yRightBottom, null);//右下
 
-        xLeftBottom = photoCorners[6] - mDataManager.shapeScaleRectLB.width() / 4;
-        yLeftBottom = photoCorners[7] - mDataManager.shapeScaleRectLB.height() / 4;
-        mDataManager.shapeScaleRectLB.offsetTo(xLeftBottom, yLeftBottom);//偏移到x,y坐标
-        canvas.drawBitmap(mDataManager.scaleMarkBM, xLeftBottom, yLeftBottom, null);//左下
+        xLeftBottom = photoCorners[6] - mDataContainer.shapeScaleRectLB.width() / 4;
+        yLeftBottom = photoCorners[7] - mDataContainer.shapeScaleRectLB.height() / 4;
+        mDataContainer.shapeScaleRectLB.offsetTo(xLeftBottom, yLeftBottom);//偏移到x,y坐标
+        canvas.drawBitmap(mDataContainer.scaleMarkBM, xLeftBottom, yLeftBottom, null);//左下
 
         //几何图形的横向竖向缩放在旋转后感觉很奇怪,暂时将横竖向缩放禁用
-//        xMiddleTop = (photoCorners[2] + photoCorners[0]) / 2 - mDataManager.shapeScaleRectUM.width() / 4;
-//        yMiddleTop = (photoCorners[3] + photoCorners[1]) / 2 - mDataManager.shapeScaleRectUM.height() / 4;
-//        mDataManager.shapeScaleRectUM.offsetTo(xMiddleTop, yMiddleTop);
-//        canvas.drawBitmap(mDataManager.scaleMarkBM, xMiddleTop, yMiddleTop, null);//上中
+//        xMiddleTop = (photoCorners[2] + photoCorners[0]) / 2 - mDataContainer.shapeScaleRectUM.width() / 4;
+//        yMiddleTop = (photoCorners[3] + photoCorners[1]) / 2 - mDataContainer.shapeScaleRectUM.height() / 4;
+//        mDataContainer.shapeScaleRectUM.offsetTo(xMiddleTop, yMiddleTop);
+//        canvas.drawBitmap(mDataContainer.scaleMarkBM, xMiddleTop, yMiddleTop, null);//上中
 //
-//        xMiddleRight = (photoCorners[4] + photoCorners[2]) / 2 - mDataManager.shapeScaleRectRM.width() / 4;
-//        yMiddleRight = (photoCorners[5] + photoCorners[3]) / 2 - mDataManager.shapeScaleRectRM.height() / 4;
-//        mDataManager.shapeScaleRectRM.offsetTo(xMiddleRight, yMiddleRight);
-//        canvas.drawBitmap(mDataManager.scaleMarkBM, xMiddleRight, yMiddleRight, null);//右中
+//        xMiddleRight = (photoCorners[4] + photoCorners[2]) / 2 - mDataContainer.shapeScaleRectRM.width() / 4;
+//        yMiddleRight = (photoCorners[5] + photoCorners[3]) / 2 - mDataContainer.shapeScaleRectRM.height() / 4;
+//        mDataContainer.shapeScaleRectRM.offsetTo(xMiddleRight, yMiddleRight);
+//        canvas.drawBitmap(mDataContainer.scaleMarkBM, xMiddleRight, yMiddleRight, null);//右中
 //
-//        xMiddleBottom = (photoCorners[4] + photoCorners[6]) / 2 - mDataManager.shapeScaleRectBM.width() / 4;
-//        yMiddleBottom = (photoCorners[5] + photoCorners[7]) / 2 - mDataManager.shapeScaleRectBM.height() / 4;
-//        mDataManager.shapeScaleRectBM.offsetTo(xMiddleBottom, yMiddleBottom);
-//        canvas.drawBitmap(mDataManager.scaleMarkBM, xMiddleBottom, yMiddleBottom, null);//下中
+//        xMiddleBottom = (photoCorners[4] + photoCorners[6]) / 2 - mDataContainer.shapeScaleRectBM.width() / 4;
+//        yMiddleBottom = (photoCorners[5] + photoCorners[7]) / 2 - mDataContainer.shapeScaleRectBM.height() / 4;
+//        mDataContainer.shapeScaleRectBM.offsetTo(xMiddleBottom, yMiddleBottom);
+//        canvas.drawBitmap(mDataContainer.scaleMarkBM, xMiddleBottom, yMiddleBottom, null);//下中
 //
-//        xMidlleLeft = (photoCorners[6] + photoCorners[0]) / 2 - mDataManager.shapeScaleRectLM.width() / 4;
-//        yMiddleLeft = (photoCorners[7] + photoCorners[1]) / 2 - mDataManager.shapeScaleRectLM.height() / 4;
-//        mDataManager.shapeScaleRectLM.offsetTo(xMidlleLeft, yMiddleLeft);
-//        canvas.drawBitmap(mDataManager.scaleMarkBM, xMidlleLeft, yMiddleLeft, null);//左中
+//        xMidlleLeft = (photoCorners[6] + photoCorners[0]) / 2 - mDataContainer.shapeScaleRectLM.width() / 4;
+//        yMiddleLeft = (photoCorners[7] + photoCorners[1]) / 2 - mDataContainer.shapeScaleRectLM.height() / 4;
+//        mDataContainer.shapeScaleRectLM.offsetTo(xMidlleLeft, yMiddleLeft);
+//        canvas.drawBitmap(mDataContainer.scaleMarkBM, xMidlleLeft, yMiddleLeft, null);//左中
     }
 
     /**
@@ -432,8 +435,8 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
     private void changeRushMatrix() {
         float[] values = new float[9];
         mRushMatrix.getValues(values);
-        values[Matrix.MTRANS_X] = mDataManager.mCurX - (mRushIconBitmap.getWidth() * values[Matrix.MSCALE_X] / 2);
-        values[Matrix.MTRANS_Y] = mDataManager.mCurY - (mRushIconBitmap.getHeight() * values[Matrix.MSCALE_X] / 2);
+        values[Matrix.MTRANS_X] = mDataContainer.mCurX - (mRushIconBitmap.getWidth() * values[Matrix.MSCALE_X] / 2);
+        values[Matrix.MTRANS_Y] = mDataContainer.mCurY - (mRushIconBitmap.getHeight() * values[Matrix.MSCALE_X] / 2);
         values[Matrix.MSCALE_X] = 1;
         values[Matrix.MSCALE_Y] = 1;
         mRushMatrix.setValues(values);
@@ -443,51 +446,6 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
         float[] values = new float[9];
         mBaseMatrix.getValues(values);
         return values[Matrix.MSCALE_X];
-    }
-
-    public void clear() {
-        isSelectPhoto = false;
-        isSelectShape = false;
-        mCurDrawPhoto = null;
-        mCurSelectShape = null;
-        setDrawType(PEN);
-        mDataManager.clear();
-        renewPaintView();
-        invalidate();
-    }
-
-    /**
-     * 重新创建空的画板/清空画板
-     */
-    public void renewPaintView() {
-        if (getPaintBitmapWidth() == 0) {
-            return;
-        }
-
-        if (mPaintBitmapRef != null && mPaintBitmapRef.get() != null) {
-            if (mPaintCanvas == null) {
-                try {
-                    mPaintCanvas = new Canvas(mPaintBitmapRef.get());
-                } catch (Exception e) {
-                    Log.e(TAG, "mPaintBitmapRef.get() == null");
-                }
-            }
-            if (mPaintCanvas != null)
-                mPaintCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-        } else {
-            Bitmap bitmap = Bitmap.createBitmap(getPaintBitmapWidth(), getPaintBitmapHeight(), mConfig);
-            if (null == mPaintBitmapRef) {
-                mPaintBitmapRef = new SoftReference<>(bitmap);
-            } else {
-                mPaintBitmapRef.clear();
-                mPaintBitmapRef = new SoftReference<>(bitmap);
-            }
-            try {
-                mPaintCanvas = new Canvas(mPaintBitmapRef.get());
-            } catch (Exception e) {
-                Log.e(TAG, "mPaintBitmapRef.get() == null");
-            }
-        }
     }
 
 
@@ -501,6 +459,14 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
         Canvas canvas = new Canvas(res);
         this.draw(canvas);
         return res;
+    }
+
+    public void undo() {
+        mDrawStepControler.undo();
+    }
+
+    public void redo() {
+        mDrawStepControler.redo();
     }
 
     //.....................................................各种set/get........................................................
@@ -621,12 +587,12 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
         return mPaintBitmapRef;
     }
 
-    public PaintViewDrawDataManager getDrawDataManager() {
-        return mDataManager;
+    public PaintViewDrawDataContainer getDrawDataContainer() {
+        return mDataContainer;
     }
 
     public DrawPhotoData getCurDrawPhoto() {
-        return mCurDrawPhoto;
+        return mCurSelectPhoto;
     }
 
     public DrawShapeData getCurSelectShape() {
@@ -657,14 +623,49 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
 
     //.....................................................各种set/get........................................................
 
-    public void destroy() {
-        if (null != mPaintViewAttacher) {
-            mPaintViewAttacher.detach();
+    public void clear() {
+        isSelectPhoto = false;
+        isSelectShape = false;
+        mCurSelectPhoto = null;
+        mCurSelectShape = null;
+        setDrawType(PEN);
+        mDataContainer.clear();
+        renewPaintView();
+        invalidate();
+    }
+
+    /**
+     * 重新创建空的画板/清空画板
+     */
+    public void renewPaintView() {
+        if (getPaintBitmapWidth() == 0) {
+            return;
         }
-        if (null != mDataManager) {
-            mDataManager.clearAndSetNull();
+
+        if (mPaintBitmapRef != null && mPaintBitmapRef.get() != null) {
+            if (mPaintCanvas == null) {
+                try {
+                    mPaintCanvas = new Canvas(mPaintBitmapRef.get());
+                } catch (Exception e) {
+                    Log.e(TAG, "mPaintBitmapRef.get() == null");
+                }
+            }
+            if (mPaintCanvas != null)
+                mPaintCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+        } else {
+            Bitmap bitmap = Bitmap.createBitmap(getPaintBitmapWidth(), getPaintBitmapHeight(), mConfig);
+            if (null == mPaintBitmapRef) {
+                mPaintBitmapRef = new SoftReference<>(bitmap);
+            } else {
+                mPaintBitmapRef.clear();
+                mPaintBitmapRef = new SoftReference<>(bitmap);
+            }
+            try {
+                mPaintCanvas = new Canvas(mPaintBitmapRef.get());
+            } catch (Exception e) {
+                Log.e(TAG, "mPaintBitmapRef.get() == null");
+            }
         }
-        recycleAllBitmap();
     }
 
     /**
@@ -680,6 +681,16 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
             mRushIconBitmap.recycle();
             mRushIconBitmap = null;
         }
+    }
+
+    public void destroy() {
+        if (null != mPaintViewAttacher) {
+            mPaintViewAttacher.detach();
+        }
+        if (null != mDataContainer) {
+            mDataContainer.clearAndSetNull();
+        }
+        recycleAllBitmap();
     }
 
 }

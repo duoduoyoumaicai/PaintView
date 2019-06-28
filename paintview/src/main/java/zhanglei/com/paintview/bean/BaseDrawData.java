@@ -16,11 +16,11 @@ public class BaseDrawData {
      * 创建备忘录的方法
      *
      * @param doWhat
-     * @param addIndex
+     * @param onAddIndexListener
      * @return
      */
-    protected DrawDataMemento createDrawDataMemento(int doWhat, DrawDataMemento.AddIndex addIndex) {
-        return new DrawDataMemento(addIndex);
+    protected DrawDataMemento createDrawDataMemento(int doWhat, DrawDataMemento.onAddIndexListener onAddIndexListener) {
+        return new DrawDataMemento(onAddIndexListener);
     }
 
 }
