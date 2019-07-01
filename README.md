@@ -20,7 +20,7 @@ allprojects {
   ```
   implementation 'com.github.duoduoyoumaicai:PaintView:1.2'
   ```
-  * 1.2之前的版本为预发布版本,部分功能无法使用,请直接引用1.2及其以上版本
+  * 1.2之前的版本为预发布版本,部分功能无法使用,请直接引用1.2版本
   
   # 使用方式
    * 在xml布局文件中引入PaintView
