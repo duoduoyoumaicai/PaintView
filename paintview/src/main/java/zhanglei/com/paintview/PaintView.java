@@ -21,6 +21,7 @@ import android.view.ViewTreeObserver;
 import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
 
+import zhanglei.com.paintview.bean.DrawDataMemento;
 import zhanglei.com.paintview.bean.DrawPhotoData;
 import zhanglei.com.paintview.bean.DrawShapeData;
 import zhanglei.com.paintview.touchmanager.PaintViewAttacher;
@@ -40,7 +41,7 @@ import static zhanglei.com.paintview.DrawTypeEnum.SELECT_STATUS;
  * 修改备注：
  */
 
-public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutListener {
+public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutListener, DrawDataMemento.onAddIndexListener {
 
     private final String TAG = getClass().getSimpleName();
 
@@ -84,15 +85,11 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
 
     private boolean isSelectShape;//选择了几何图形
 
-    private DrawPhotoData mCurSelectPhoto;//当前选中的图片
-
-    private DrawShapeData mCurSelectShape;//当前选中的几何图形
-
     private Paint mBoardPaint = null;//画图片的边线
 
     private static final float DEFAULT_PHOTO_HEIGHT = 400.00F;//图片默认显示高度
 
-    private DrawStepControler mDrawStepControler;
+    private DrawStepControler mStepControler;
 
     public PaintView(Context context) {
         this(context, null);
@@ -110,7 +107,7 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
 
     private void init() {
         mDataContainer = new PaintViewDrawDataContainer(this);
-        mDrawStepControler = new DrawStepControler(this);
+        mStepControler = new DrawStepControler(this);
 
         //初始化绘制图形的画笔
         mPaint = new Paint();
@@ -174,7 +171,7 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
         }
     }
 
-    public void initPaintCanvas() {
+    private void initPaintCanvas() {
 
         if (this.mWidth > 0 && this.mHeight > 0) {
             Bitmap bitmap = Bitmap.createBitmap(this.mWidth, this.mHeight, this.mConfig);
@@ -201,7 +198,7 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
         setDrawType(SELECT_STATUS);
         if (sampleBM != null) {
             DrawPhotoData newRecord = initDrawPhoto(sampleBM);
-            setCurDrawPhoto(newRecord);
+            setCurSelectPhoto(newRecord);
         }
     }
 
@@ -222,6 +219,9 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
 
         drawPhoto.mMatrix.postTranslate(Util.getScreenSize(mContext).x / 2 - drawPhoto.bitmap.getWidth() * scale / 2,
                 Util.getScreenSize(mContext).y / 2 - drawPhoto.bitmap.getHeight() * scale / 2);
+        //添加一条备忘录
+        mStepControler.addMemento(drawPhoto.createDrawDataMemento(DrawDataMemento.ADD, this));
+        mDataContainer.curIndex = mDataContainer.mMementoList.size() - 1;//重置curIndex
         return drawPhoto;
     }
 
@@ -230,7 +230,7 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
      *
      * @param drawPhotoData
      */
-    public void setCurDrawPhoto(DrawPhotoData drawPhotoData) {
+    public void setCurSelectPhoto(DrawPhotoData drawPhotoData) {
         if (null != drawPhotoData) {
             isSelectPhoto = true;
             setCurSelectShape(null);
@@ -239,7 +239,7 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
         }
         mDataContainer.mDrawPhotoList.remove(drawPhotoData);
         mDataContainer.mDrawPhotoList.add(drawPhotoData);
-        mCurSelectPhoto = drawPhotoData;
+        mDataContainer.mCurSelectPhoto = drawPhotoData;
         invalidate();
     }
 
@@ -256,8 +256,8 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
                     canvas.drawBitmap(record.bitmap, record.mMatrix, null);
                 }
             }
-            if (!isSelectShape && isSelectPhoto && mCurSelectPhoto != null) {
-                float[] photoCorners = Util.calculateCorners(mCurSelectPhoto);//计算图片四个角点和中心点
+            if (!isSelectShape && isSelectPhoto && mDataContainer.mCurSelectPhoto != null) {
+                float[] photoCorners = Util.calculateCorners(mDataContainer.mCurSelectPhoto);//计算图片四个角点和中心点
                 drawBoard(canvas, photoCorners);//绘制图形边线
                 drawPhotoMarks(canvas, photoCorners);//绘制边角图片
             }
@@ -324,13 +324,13 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
     public void setCurSelectShape(DrawShapeData drawShapeData) {
         if (null != drawShapeData) {
             isSelectShape = true;
-            setCurDrawPhoto(null);
+            setCurSelectPhoto(null);
         } else {
             isSelectShape = false;
         }
         mDataContainer.mDrawShapeList.remove(drawShapeData);
         mDataContainer.mDrawShapeList.add(drawShapeData);
-        mCurSelectShape = drawShapeData;
+        mDataContainer.mCurSelectShape = drawShapeData;
         invalidate();
     }
 
@@ -348,8 +348,8 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
             }
         }
 
-        if (!isSelectPhoto && isSelectShape && mCurSelectShape != null) {
-            float[] photoCorners = Util.calculateCorners(mCurSelectShape);//计算图片四个角点和中心点
+        if (!isSelectPhoto && isSelectShape && mDataContainer.mCurSelectShape != null) {
+            float[] photoCorners = Util.calculateCorners(mDataContainer.mCurSelectShape);//计算图片四个角点和中心点
             drawBoard(canvas, photoCorners);//绘制shape边线
             drawShapeMarks(canvas, photoCorners);//绘制边角图片
         }
@@ -361,7 +361,7 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
      * @param canvas
      * @param photoCorners
      */
-    protected void drawShapeMarks(Canvas canvas, float[] photoCorners) {
+    private void drawShapeMarks(Canvas canvas, float[] photoCorners) {
         float xLeftTop, yLeftTop, xRightTop, yRightTop, xRightBottom, yRightBottom, xLeftBottom, yLeftBottom;
 //        float yMiddleTop, xMiddleTop, xMiddleRight, yMiddleRight, xMiddleBottom, yMiddleBottom, xMidlleLeft, yMiddleLeft;
         xLeftTop = photoCorners[0] - mDataContainer.shapeScaleRectLU.width() / 4;
@@ -407,6 +407,17 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
     }
 
     /**
+     * 清除画图板中图形的选中状态
+     */
+    private void clearSelected() {
+        isSelectPhoto = false;
+        isSelectShape = false;
+        mDataContainer.mCurSelectPhoto = null;
+        mDataContainer.mCurSelectShape = null;
+        invalidate();
+    }
+
+    /**
      * 将Path生成的Bitmap绘制到画布上(包括橡皮擦)
      *
      * @param canvas
@@ -442,12 +453,6 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
         mRushMatrix.setValues(values);
     }
 
-    public float getMatrixScale() {
-        float[] values = new float[9];
-        mBaseMatrix.getValues(values);
-        return values[Matrix.MSCALE_X];
-    }
-
 
     /**
      * 获取PaintView的整体截图
@@ -455,6 +460,7 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
      * @return
      */
     public Bitmap getPaintViewScreen() {
+        clearSelected();
         Bitmap res = Bitmap.createBitmap(this.getWidth(), this.getHeight(), Bitmap.Config.ARGB_4444);
         Canvas canvas = new Canvas(res);
         this.draw(canvas);
@@ -462,11 +468,13 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
     }
 
     public void undo() {
-        mDrawStepControler.undo();
+        clearSelected();
+        mStepControler.undo();
     }
 
     public void redo() {
-        mDrawStepControler.redo();
+        clearSelected();
+        mStepControler.redo();
     }
 
     //.....................................................各种set/get........................................................
@@ -476,6 +484,7 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
     }
 
     public void setDrawType(DrawTypeEnum drawType) {
+        clearSelected();
         this.mDrawType = drawType;
         switch (drawType) {
             case ERASER:
@@ -591,14 +600,6 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
         return mDataContainer;
     }
 
-    public DrawPhotoData getCurDrawPhoto() {
-        return mCurSelectPhoto;
-    }
-
-    public DrawShapeData getCurSelectShape() {
-        return mCurSelectShape;
-    }
-
     public void setSelectPhoto(boolean selectPhoto) {
         isSelectPhoto = selectPhoto;
     }
@@ -621,13 +622,18 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
         return mHeight;
     }
 
+    public DrawStepControler getDrawStepControler() {
+        return mStepControler;
+    }
+
     //.....................................................各种set/get........................................................
 
     public void clear() {
+        mDataContainer.curIndex = -1;
         isSelectPhoto = false;
         isSelectShape = false;
-        mCurSelectPhoto = null;
-        mCurSelectShape = null;
+        mDataContainer.mCurSelectPhoto = null;
+        mDataContainer.mCurSelectShape = null;
         setDrawType(PEN);
         mDataContainer.clear();
         renewPaintView();
@@ -693,4 +699,8 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
         recycleAllBitmap();
     }
 
+    @Override
+    public void addIndex() {
+        mDataContainer.curIndex++;
+    }
 }

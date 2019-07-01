@@ -28,7 +28,7 @@ public class DrawPathData extends BaseDrawData {
     public DrawDataMemento createDrawDataMemento(int doWhat, DrawDataMemento.onAddIndexListener onAddIndexListener) {
         Log.e("DrawPathData", "create Memoto cur restore data instance is " + this.toString());
         DrawDataMemento memento = new DrawDataMemento(onAddIndexListener);
-        memento.setMcTransformData(this);
+        memento.setBaseDrawData(this);
         return memento;
     }
 }

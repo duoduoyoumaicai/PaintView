@@ -20,15 +20,13 @@ public class DrawDataMemento {
 
     public static final int TRANSFORM = 3;//变换
 
-    private BaseDrawData mcTransformData;//操作了哪个对象
+    private BaseDrawData mBaseDrawData;//操作了哪个对象
 
     private int doWhat = -1;//本次做了什么操作，默认什么都没做
 
     private Matrix startMatrix = null;//图片变换前矩阵
 
     private Matrix endMatrix = null;//图片变换后矩阵
-
-    public float[] oldCorners = new float[10];//几何图形变换的外接矩形坐标
 
     public DrawDataMemento(onAddIndexListener onAddIndexListener) {
         this.onAddIndexListener = onAddIndexListener;
@@ -40,10 +38,6 @@ public class DrawDataMemento {
 
     public interface onAddIndexListener {
         void addIndex();
-    }
-
-    public float[] getOldCorners() {
-        return oldCorners;
     }
 
     public Matrix getEndMatrix() {
@@ -74,12 +68,12 @@ public class DrawDataMemento {
         this.startMatrix.set(matrix);
     }
 
-    public BaseDrawData getMcTransformData() {
-        return mcTransformData;
+    public BaseDrawData getBaseDrawData() {
+        return mBaseDrawData;
     }
 
-    public void setMcTransformData(BaseDrawData mcTransformData) {
-        this.mcTransformData = mcTransformData;
+    public void setBaseDrawData(BaseDrawData mBaseDrawData) {
+        this.mBaseDrawData = mBaseDrawData;
     }
 
     public int getDoWhat() {

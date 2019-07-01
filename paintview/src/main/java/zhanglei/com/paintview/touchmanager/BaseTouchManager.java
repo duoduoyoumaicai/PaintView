@@ -2,8 +2,10 @@ package zhanglei.com.paintview.touchmanager;
 
 import android.view.MotionEvent;
 
+import zhanglei.com.paintview.DrawStepControler;
 import zhanglei.com.paintview.PaintView;
 import zhanglei.com.paintview.PaintViewDrawDataContainer;
+import zhanglei.com.paintview.bean.DrawDataMemento;
 
 
 /**
@@ -16,11 +18,13 @@ import zhanglei.com.paintview.PaintViewDrawDataContainer;
  * 修改备注：
  */
 
-public abstract class BaseTouchManager {
+public abstract class BaseTouchManager implements DrawDataMemento.onAddIndexListener {
 
     protected PaintView mPaintView;
 
     protected PaintViewDrawDataContainer mDataContainer;
+
+    protected DrawStepControler mStepControler;
 
     protected float downX, downY, preX, preY, curX, curY;//手指触摸屏幕的坐标
 
@@ -30,6 +34,7 @@ public abstract class BaseTouchManager {
     protected void attach(PaintView paintView) {
         mPaintView = paintView;
         mDataContainer = paintView.getDrawDataContainer();
+        mStepControler = paintView.getDrawStepControler();
     }
 
     public void onTouch(MotionEvent event) {
@@ -64,5 +69,11 @@ public abstract class BaseTouchManager {
     public void detach() {
         mDataContainer = null;
         mPaintView = null;
+    }
+
+    @Override
+    public void addIndex() {
+        if (null == mDataContainer) return;
+        mDataContainer.curIndex++;
     }
 }

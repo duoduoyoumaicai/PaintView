@@ -5,6 +5,7 @@ import android.graphics.PointF;
 import android.view.MotionEvent;
 
 import zhanglei.com.paintview.Util;
+import zhanglei.com.paintview.bean.DrawDataMemento;
 import zhanglei.com.paintview.bean.DrawPhotoData;
 import zhanglei.com.paintview.bean.DrawShapeData;
 import zhanglei.com.paintview.bean.TransformData;
@@ -43,33 +44,53 @@ public class TouchManagerForSelectStatus extends BaseTouchManager {
 
     private static final int PHOTO_ACTION_DRAG = 1;
 
+    private static final int SHAPE_ACTION_DELETE = 9;
+
+    private static final int PHOTO_ACTION_DELETE = 10;
+
     private static final int ACTION_NONE = 0;
 
     private int actionMode;
 
     @Override
     protected void onTouchUp(MotionEvent event) {
+        if (actionMode == SHAPE_ACTION_DRAG
+                || actionMode == SHAPE_ACTION_SCALE
+                || actionMode == SHAPE_ACTION_SCALE_HORIZONTAL
+                || actionMode == SHAPE_ACTION_SCALE_VERTICAL) {//几何图形的一些变换操作
 
+            if (null != mDataContainer.mCurSelectShape && mDataContainer.mMementoList.size() > 0) {
+                //check
+                mDataContainer.mMementoList.get(mDataContainer.curIndex).setEndMatrix(mDataContainer.mCurSelectShape.mMatrix);//将当前选中的几何图形的抬笔matrix设置到备忘录中的curIndex(末尾)对应的endMatrix
+            }
+        } else if (actionMode == PHOTO_ACTION_ROTATE
+                || actionMode == PHOTO_ACTION_SCALE
+                || actionMode == PHOTO_ACTION_DRAG) {//图片的一些变换操作
+            //最后一条备忘录的endMatrix
+            if (null != mDataContainer.mCurSelectPhoto && mDataContainer.mMementoList.size() > 0) {
+                mDataContainer.mMementoList.get(mDataContainer.curIndex).setEndMatrix(mDataContainer.mCurSelectPhoto.mMatrix);//将当前选中的图片的抬笔matrix设置到备忘录中的curIndex（末尾）对应的endMatrix
+            }
+        }
     }
 
     @Override
     protected void onTouchMove(MotionEvent event) {
         if (actionMode == PHOTO_ACTION_DRAG) {
-            onDragAction(mPaintView.getCurDrawPhoto(), (curX - preX), (curY - preY));
+            onDragAction(mDataContainer.mCurSelectPhoto, (curX - preX), (curY - preY));
         } else if (actionMode == PHOTO_ACTION_ROTATE) {
-            onRotateAction(mPaintView.getCurDrawPhoto());
+            onRotateAction(mDataContainer.mCurSelectPhoto);
         } else if (actionMode == PHOTO_ACTION_SCALE) {
-            onScaleAction(mPaintView.getCurDrawPhoto());
+            onScaleAction(mDataContainer.mCurSelectPhoto);
         } else if (actionMode == SHAPE_ACTION_SCALE) {
-            onScaleAction(mPaintView.getCurSelectShape());
+            onScaleAction(mDataContainer.mCurSelectShape);
         } else if (actionMode == SHAPE_ACTION_DRAG) {
-            onDragAction(mPaintView.getCurSelectShape(), (curX - preX), (curY - preY));
+            onDragAction(mDataContainer.mCurSelectShape, (curX - preX), (curY - preY));
         } else if (actionMode == SHAPE_ACTION_ROTATE) {
-            onRotateAction(mPaintView.getCurSelectShape());
+            onRotateAction(mDataContainer.mCurSelectShape);
         } else if (actionMode == SHAPE_ACTION_SCALE_HORIZONTAL) {
-            onScaleHorizontal(mPaintView.getCurSelectShape());
+            onScaleHorizontal(mDataContainer.mCurSelectShape);
         } else if (actionMode == SHAPE_ACTION_SCALE_VERTICAL) {
-            onScaleVertical(mPaintView.getCurSelectShape());
+            onScaleVertical(mDataContainer.mCurSelectShape);
         }
         preX = curX;
         preY = curY;
@@ -88,13 +109,19 @@ public class TouchManagerForSelectStatus extends BaseTouchManager {
             TransformData transformData = selectWhat(downPoint);
             if (null == transformData) {//没有选中图片也没有选中shape
                 mPaintView.setCurSelectShape(null);
-                mPaintView.setCurDrawPhoto(null);
+                mPaintView.setCurSelectPhoto(null);
             } else if (transformData instanceof DrawShapeData) {//平移几何图形
                 mPaintView.setCurSelectShape((DrawShapeData) transformData);
-                mPaintView.setCurDrawPhoto(null);
+                mPaintView.setCurSelectPhoto(null);
+
+                //添加一条备忘录,点中几何图形一般是移动操作
+                mStepControler.addMemento(((DrawShapeData) transformData).createDrawDataMemento(DrawDataMemento.TRANSFORM, this));
             } else if (transformData instanceof DrawPhotoData) {//平移图片
                 mPaintView.setCurSelectShape(null);
-                mPaintView.setCurDrawPhoto((DrawPhotoData) transformData);
+                mPaintView.setCurSelectPhoto((DrawPhotoData) transformData);
+
+                //添加一条备忘录,点中图片一般是移动操作
+                mStepControler.addMemento(((DrawPhotoData) transformData).createDrawDataMemento(DrawDataMemento.TRANSFORM, this));
             }
         }
     }
@@ -110,6 +137,11 @@ public class TouchManagerForSelectStatus extends BaseTouchManager {
         //1.判断是否在当前选中shape缩放图标区域内
         if (mDataContainer.shapeScaleRectLU.contains(downPoint[0], (int) downPoint[1])
                 || mDataContainer.shapeScaleRectLB.contains(downPoint[0], (int) downPoint[1])) {
+            if (mDataContainer.mCurSelectShape != null) {
+                //添加一条备忘录
+                DrawDataMemento drawDataMemento = mDataContainer.mCurSelectShape.createDrawDataMemento(DrawDataMemento.TRANSFORM, this);
+                mStepControler.addMemento(drawDataMemento);
+            }
             actionMode = SHAPE_ACTION_SCALE;
             return true;
         }
@@ -117,6 +149,11 @@ public class TouchManagerForSelectStatus extends BaseTouchManager {
         //几何图形，判断是否上下缩放
         if (mDataContainer.shapeScaleRectUM.contains(downPoint[0], downPoint[1])
                 || mDataContainer.shapeScaleRectBM.contains(downPoint[0], downPoint[1])) {
+            if (mDataContainer.mCurSelectShape != null) {
+                //添加一条备忘录
+                DrawDataMemento drawDataMemento = mDataContainer.mCurSelectShape.createDrawDataMemento(DrawDataMemento.TRANSFORM, this);
+                mStepControler.addMemento(drawDataMemento);
+            }
             actionMode = SHAPE_ACTION_SCALE_VERTICAL;
             return true;
         }
@@ -124,42 +161,71 @@ public class TouchManagerForSelectStatus extends BaseTouchManager {
         //几何图形，是否左右缩放
         if (mDataContainer.shapeScaleRectRM.contains(downPoint[0], downPoint[1])
                 || mDataContainer.shapeScaleRectLM.contains(downPoint[0], downPoint[1])) {
+            if (mDataContainer.mCurSelectShape != null) {
+                //添加一条备忘录
+                DrawDataMemento drawDataMemento = mDataContainer.mCurSelectShape.createDrawDataMemento(DrawDataMemento.TRANSFORM, this);
+                mStepControler.addMemento(drawDataMemento);
+            }
             actionMode = SHAPE_ACTION_SCALE_HORIZONTAL;
             return true;
         }
 
         //2.判断是否在当前选中shape删除图标区域内，如果在就做shape删除操作
         if (mDataContainer.shapeDeleteRectRU.contains(downPoint[0], (int) downPoint[1])) {
-            mDataContainer.mDrawShapeList.remove(mPaintView.getCurSelectShape());
+            if (mDataContainer.mCurSelectShape != null) {
+                //添加一条备忘录
+                mStepControler.addMemento(mDataContainer.mCurSelectShape.createDrawDataMemento(DrawDataMemento.DELETE, this));
+            }
+
+            mDataContainer.mDrawShapeList.remove(mDataContainer.mCurSelectShape);
             mPaintView.setCurSelectShape(null);
-            actionMode = ACTION_NONE;
+            actionMode = SHAPE_ACTION_DELETE;
             mPaintView.setSelectShape(false);
             return true;
         }
         //3.判断是否在当前选中图片缩放图标区域内
         if (mDataContainer.photoScaleRectLU.contains(downPoint[0], (int) downPoint[1])
                 || mDataContainer.photoScaleRectLB.contains(downPoint[0], (int) downPoint[1])) {
+            if (mDataContainer.mCurSelectPhoto != null) {
+                //添加一条备忘录
+                mStepControler.addMemento(mDataContainer.mCurSelectPhoto.createDrawDataMemento(DrawDataMemento.TRANSFORM, this));
+            }
             actionMode = PHOTO_ACTION_SCALE;
             return true;
         }
         //4.判断是否在当前选中图片删除图标区域内，如果在就做图片删除操作
         if (mDataContainer.photoDeleteRectRU.contains(downPoint[0], (int) downPoint[1])) {
-            mDataContainer.mDrawPhotoList.remove(mPaintView.getCurDrawPhoto());
-            mPaintView.setCurDrawPhoto(null);
-            actionMode = ACTION_NONE;
+            if (mDataContainer.mCurSelectPhoto != null) {
+                //添加一条备忘录
+                mStepControler.addMemento(mDataContainer.mCurSelectPhoto.createDrawDataMemento(DrawDataMemento.DELETE, this));
+            }
+
+            mDataContainer.mDrawPhotoList.remove(mDataContainer.mCurSelectPhoto);
+            mPaintView.setCurSelectPhoto(null);
+            actionMode = PHOTO_ACTION_DELETE;
             mPaintView.setSelectPhoto(false);
             return true;
         }
         //5.判断是否在当前选中图片旋转图标区域内
         if (mDataContainer.photoRotateRectRB.contains(downPoint[0], (int) downPoint[1])) {
+            if (mDataContainer.mCurSelectPhoto != null) {
+                //添加一条备忘录
+                mStepControler.addMemento(mDataContainer.mCurSelectPhoto.createDrawDataMemento(DrawDataMemento.TRANSFORM, this));
+            }
             actionMode = PHOTO_ACTION_ROTATE;
             return true;
         }
         //6.判断是否在当前选中shape旋转图标区域内
         if (mDataContainer.shapeRotateRectRB.contains(downPoint[0], (int) downPoint[1])) {
+            if (mDataContainer.mCurSelectShape != null) {
+                //添加一条备忘录
+                DrawDataMemento drawDataMemento = mDataContainer.mCurSelectShape.createDrawDataMemento(DrawDataMemento.TRANSFORM, this);
+                mStepControler.addMemento(drawDataMemento);
+            }
             actionMode = SHAPE_ACTION_ROTATE;
             return true;
         }
+
         return false;
     }
 
@@ -170,10 +236,10 @@ public class TouchManagerForSelectStatus extends BaseTouchManager {
      */
     public TransformData selectWhat(float[] downPoint) {
         //1.判断是否选中当前shape
-        if (isInRect(mPaintView.getCurSelectShape(), downPoint)) {
+        if (isInRect(mDataContainer.mCurSelectShape, downPoint)) {
             actionMode = SHAPE_ACTION_DRAG;
             mPaintView.setSelectShape(true);
-            return mPaintView.getCurSelectShape();
+            return mDataContainer.mCurSelectShape;
         }
 
         //2.遍历shape集合看看选中了哪个shape
@@ -192,10 +258,10 @@ public class TouchManagerForSelectStatus extends BaseTouchManager {
         }
 
         //3.判断是否选中当前图片
-        if (isInRect(mPaintView.getCurDrawPhoto(), downPoint)) {
+        if (isInRect(mDataContainer.mCurSelectPhoto, downPoint)) {
             actionMode = PHOTO_ACTION_DRAG;
             mPaintView.setSelectPhoto(true);
-            return mPaintView.getCurDrawPhoto();
+            return mDataContainer.mCurSelectPhoto;
         }
         //4.遍历图片集合看看选中了哪个图片
         DrawPhotoData clickPhoto = null;
@@ -371,6 +437,5 @@ public class TouchManagerForSelectStatus extends BaseTouchManager {
             ((DrawShapeData) transformData).drawPath.transform(transformData.mMatrix);
         }
     }
-
 
 }

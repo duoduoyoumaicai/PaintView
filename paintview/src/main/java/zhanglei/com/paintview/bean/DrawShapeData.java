@@ -34,7 +34,7 @@ public class DrawShapeData extends TransformData {
         memento = new DrawDataMemento(onAddIndexListener);
         memento.setDoWhat(doWhat);
         memento.setStartMatrix(this.mMatrix);
-        memento.setMcTransformData(this);
+        memento.setBaseDrawData(this);
 
         return memento;
     }

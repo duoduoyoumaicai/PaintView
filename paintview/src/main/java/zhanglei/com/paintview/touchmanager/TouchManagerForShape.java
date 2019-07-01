@@ -8,6 +8,7 @@ import android.graphics.RectF;
 import android.view.MotionEvent;
 
 import zhanglei.com.paintview.DrawTypeEnum;
+import zhanglei.com.paintview.bean.DrawDataMemento;
 import zhanglei.com.paintview.bean.DrawShapeData;
 
 
@@ -33,8 +34,6 @@ public class TouchManagerForShape extends BaseTouchManager {
 
     public static float SCALE_MIN_LEN = 50;//几何图形外接矩形最小宽高尺寸(px)
 
-    private DrawShapeData mCurDrawShape = new DrawShapeData();//当前画出的shape
-
 
     @Override
     protected void onTouchUp(MotionEvent event) {
@@ -42,8 +41,21 @@ public class TouchManagerForShape extends BaseTouchManager {
         endX = Math.max(Math.min(event.getX(), rect.right), rect.left);
         endY = Math.max(Math.min(event.getY(), rect.bottom), rect.top);
         event.setLocation(endX, endY);
-        buildFinalShape(mCurDrawShape);
-        mDataContainer.mDrawShapeList.add(mCurDrawShape);
+        buildFinalShape(mDataContainer.mCurDrawShape);
+        mDataContainer.mDrawShapeList.add(mDataContainer.mCurDrawShape);
+        int maxUndoListIndex = mDataContainer.mMementoList.size() - 1;
+        if (mDataContainer.curIndex != maxUndoListIndex) {//移除curIndex之后的所有历史记录
+            int index = maxUndoListIndex;
+            while (index > mDataContainer.curIndex) {
+                mDataContainer.mMementoList.remove(index);
+                index--;
+            }
+        }
+        //几何数据添加至备忘录
+        if (null != mDataContainer.mCurDrawShape) {
+            mDataContainer.mMementoList.add(mDataContainer.mCurDrawShape.createDrawDataMemento(DrawDataMemento.ADD, this));
+            mDataContainer.curIndex = mDataContainer.mMementoList.size() - 1;//更新curIndex至数组末尾
+        }
         clearTempShapeData();
     }
 
@@ -62,13 +74,13 @@ public class TouchManagerForShape extends BaseTouchManager {
         clearTempShapeData();
         startX = event.getX();
         startY = event.getY();
-        mCurDrawShape = new DrawShapeData();
-        mCurDrawShape.drawType = mPaintView.getDrawType();
-        mCurDrawShape.drawPath = new Path();
-        mCurDrawShape.srcPath = new Path();
-        mCurDrawShape.mRectSrc = new RectF(startX, startY, startX, startY);
-        mCurDrawShape.paint = new Paint(mPaintView.getPaint());//保存画笔
-        mCurDrawShape.mMatrix = new Matrix();
+        mDataContainer.mCurDrawShape = new DrawShapeData();
+        mDataContainer.mCurDrawShape.drawType = mPaintView.getDrawType();
+        mDataContainer.mCurDrawShape.drawPath = new Path();
+        mDataContainer.mCurDrawShape.srcPath = new Path();
+        mDataContainer.mCurDrawShape.mRectSrc = new RectF(startX, startY, startX, startY);
+        mDataContainer.mCurDrawShape.paint = new Paint(mPaintView.getPaint());//保存画笔
+        mDataContainer.mCurDrawShape.mMatrix = new Matrix();
     }
 
     /**

@@ -17,7 +17,7 @@ import zhanglei.com.paintview.bean.DrawPathData;
  * 修改备注：
  */
 
-public class TouchManagerForPath extends BaseTouchManager implements DrawDataMemento.onAddIndexListener {
+public class TouchManagerForPath extends BaseTouchManager {
 
     @Override
     protected void onTouchUp(MotionEvent event) {
@@ -28,9 +28,9 @@ public class TouchManagerForPath extends BaseTouchManager implements DrawDataMem
         DrawPathData drawPathData = new DrawPathData(mDataContainer.mTempPath, mPaintView.getPaint());
         //将当前的path保存的数据集
         mDataContainer.mDrawPathList.add(drawPathData);
-        //添加一条备忘录
-        mDataContainer.mUndoList.add(drawPathData.createDrawDataMemento(DrawDataMemento.ADD, this));
 
+        //添加一条备忘录
+        mStepControler.addMemento(drawPathData.createDrawDataMemento(DrawDataMemento.ADD, this));
         //重置mPath
         mDataContainer.mTempPath.reset();
     }
@@ -58,8 +58,4 @@ public class TouchManagerForPath extends BaseTouchManager implements DrawDataMem
 
     }
 
-    @Override
-    public void addIndex() {
-        mDataContainer.curIndex++;
-    }
 }

@@ -37,7 +37,13 @@ public class PaintViewDrawDataContainer {
 
     public CopyOnWriteArrayList<DrawPathData> mDrawPathList;//用于记录path的集合路径
 
-    public CopyOnWriteArrayList<DrawDataMemento> mUndoList;//回退集合,每一步操作就产生一个备忘录,存储到这个集合里
+    public CopyOnWriteArrayList<DrawDataMemento> mMementoList;//备忘录集合,每一步操作就产生一个备忘录,存储到这个集合里
+
+    public DrawShapeData mCurDrawShape = new DrawShapeData();//当前画出的shape
+
+    public DrawPhotoData mCurSelectPhoto;//当前选中的图片
+
+    public DrawShapeData mCurSelectShape;//当前选中的几何图形
 
     public Bitmap scaleMarkBM;//缩放图标
 
@@ -73,7 +79,7 @@ public class PaintViewDrawDataContainer {
         mTempPath = new Path();
         mDrawPhotoList = new CopyOnWriteArrayList<>();
         mDrawShapeList = new CopyOnWriteArrayList<>();
-        mUndoList = new CopyOnWriteArrayList<>();
+        mMementoList = new CopyOnWriteArrayList<>();
         mDrawPathList = new CopyOnWriteArrayList();
         scaleMarkBM = BitmapFactory.decodeResource(paintView.getResources(), R.drawable.photo_transform_icon);
         deleteMarkBM = BitmapFactory.decodeResource(paintView.getResources(), R.drawable.photo_delect_icon);
@@ -97,7 +103,7 @@ public class PaintViewDrawDataContainer {
         mTempPath = null;
         mDrawPhotoList = null;
         mDrawShapeList = null;
-        mUndoList = null;
+        mMementoList = null;
         mDrawPathList = null;
     }
 
@@ -109,11 +115,12 @@ public class PaintViewDrawDataContainer {
         if (null != mDrawShapeList) {
             mDrawShapeList.clear();
         }
-        if (null != mUndoList) {
-            mUndoList.clear();
+        if (null != mMementoList) {
+            mMementoList.clear();
         }
         if (null != mDrawPathList) {
             mDrawPathList.clear();
         }
+
     }
 }
