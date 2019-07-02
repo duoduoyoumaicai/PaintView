@@ -18,9 +18,10 @@ allprojects {
 ```
   Module的build.gradle文件中加上
   ```
-  implementation 'com.github.duoduoyoumaicai:PaintView:1.2'
+  implementation 'com.github.duoduoyoumaicai:PaintView:1.3'
   ```
   * 1.2之前的版本为预发布版本,部分功能无法使用,请直接引用1.2版本
+  * 1.3版本增加撤销重做功能
   
   # 使用方式
    * 在xml布局文件中引入PaintView
@@ -63,6 +64,14 @@ paintView.setDrawType(DrawTypeEnum.LINE);
 * 添加图片
 ```
  paintView.addPhotoByBitmap(bitmap);
+```
+* 撤销
+```
+ paintView.undo();
+```
+* 重做
+```
+ paintView.redo();
 ```
 * 设置为选择模式,这个模式可以选择几何图形和图片,对他们进行移动缩放旋转
 ```
