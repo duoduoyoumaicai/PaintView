@@ -77,8 +77,8 @@ public class DrawStepControler {
                     }
                 }
             }
-            mDataContainer.curIndex--;
             mPaintView.invalidate();
+            mDataContainer.curIndex--;
 
         }
     }
@@ -134,8 +134,8 @@ public class DrawStepControler {
 
             }
 
-            mDataContainer.curIndex++;//处理shape ,photo的备忘录索引逻辑
             mPaintView.invalidate();
+            mDataContainer.curIndex++;//处理shape ,photo的备忘录索引逻辑
         }
 
     }
@@ -143,7 +143,7 @@ public class DrawStepControler {
     /**
      * 移除curIndex之后的所有undoList的 item
      */
-    private void removeUndoListItemsAfterCurIndex() {
+    public void removeUndoListItemsAfterCurIndex() {
         int maxUndoListIndex = mDataContainer.mMementoList.size() - 1;
         if (mDataContainer.curIndex != maxUndoListIndex) {//移除curIndex之后的所有历史记录
             int index = maxUndoListIndex;
@@ -161,7 +161,6 @@ public class DrawStepControler {
      * @param drawDataMemento
      */
     public void addMemento(DrawDataMemento drawDataMemento) {
-        removeUndoListItemsAfterCurIndex();
         mDataContainer.mMementoList.add(drawDataMemento);
     }
 }

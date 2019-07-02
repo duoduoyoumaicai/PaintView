@@ -43,17 +43,11 @@ public class TouchManagerForShape extends BaseTouchManager {
         event.setLocation(endX, endY);
         buildFinalShape(mDataContainer.mCurDrawShape);
         mDataContainer.mDrawShapeList.add(mDataContainer.mCurDrawShape);
-        int maxUndoListIndex = mDataContainer.mMementoList.size() - 1;
-        if (mDataContainer.curIndex != maxUndoListIndex) {//移除curIndex之后的所有历史记录
-            int index = maxUndoListIndex;
-            while (index > mDataContainer.curIndex) {
-                mDataContainer.mMementoList.remove(index);
-                index--;
-            }
-        }
+
         //几何数据添加至备忘录
         if (null != mDataContainer.mCurDrawShape) {
-            mDataContainer.mMementoList.add(mDataContainer.mCurDrawShape.createDrawDataMemento(DrawDataMemento.ADD, this));
+            mStepControler.removeUndoListItemsAfterCurIndex();
+            mStepControler.addMemento(mDataContainer.mCurDrawShape.createDrawDataMemento(DrawDataMemento.ADD, this));
             mDataContainer.curIndex = mDataContainer.mMementoList.size() - 1;//更新curIndex至数组末尾
         }
         clearTempShapeData();

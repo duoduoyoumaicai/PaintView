@@ -115,12 +115,14 @@ public class TouchManagerForSelectStatus extends BaseTouchManager {
                 mPaintView.setCurSelectPhoto(null);
 
                 //添加一条备忘录,点中几何图形一般是移动操作
+                mStepControler.removeUndoListItemsAfterCurIndex();
                 mStepControler.addMemento(((DrawShapeData) transformData).createDrawDataMemento(DrawDataMemento.TRANSFORM, this));
             } else if (transformData instanceof DrawPhotoData) {//平移图片
                 mPaintView.setCurSelectShape(null);
                 mPaintView.setCurSelectPhoto((DrawPhotoData) transformData);
 
                 //添加一条备忘录,点中图片一般是移动操作
+                mStepControler.removeUndoListItemsAfterCurIndex();
                 mStepControler.addMemento(((DrawPhotoData) transformData).createDrawDataMemento(DrawDataMemento.TRANSFORM, this));
             }
         }
@@ -139,6 +141,7 @@ public class TouchManagerForSelectStatus extends BaseTouchManager {
                 || mDataContainer.shapeScaleRectLB.contains(downPoint[0], (int) downPoint[1])) {
             if (mDataContainer.mCurSelectShape != null) {
                 //添加一条备忘录
+                mStepControler.removeUndoListItemsAfterCurIndex();
                 DrawDataMemento drawDataMemento = mDataContainer.mCurSelectShape.createDrawDataMemento(DrawDataMemento.TRANSFORM, this);
                 mStepControler.addMemento(drawDataMemento);
             }
@@ -151,6 +154,7 @@ public class TouchManagerForSelectStatus extends BaseTouchManager {
                 || mDataContainer.shapeScaleRectBM.contains(downPoint[0], downPoint[1])) {
             if (mDataContainer.mCurSelectShape != null) {
                 //添加一条备忘录
+                mStepControler.removeUndoListItemsAfterCurIndex();
                 DrawDataMemento drawDataMemento = mDataContainer.mCurSelectShape.createDrawDataMemento(DrawDataMemento.TRANSFORM, this);
                 mStepControler.addMemento(drawDataMemento);
             }
@@ -163,6 +167,7 @@ public class TouchManagerForSelectStatus extends BaseTouchManager {
                 || mDataContainer.shapeScaleRectLM.contains(downPoint[0], downPoint[1])) {
             if (mDataContainer.mCurSelectShape != null) {
                 //添加一条备忘录
+                mStepControler.removeUndoListItemsAfterCurIndex();
                 DrawDataMemento drawDataMemento = mDataContainer.mCurSelectShape.createDrawDataMemento(DrawDataMemento.TRANSFORM, this);
                 mStepControler.addMemento(drawDataMemento);
             }
@@ -174,6 +179,7 @@ public class TouchManagerForSelectStatus extends BaseTouchManager {
         if (mDataContainer.shapeDeleteRectRU.contains(downPoint[0], (int) downPoint[1])) {
             if (mDataContainer.mCurSelectShape != null) {
                 //添加一条备忘录
+                mStepControler.removeUndoListItemsAfterCurIndex();
                 mStepControler.addMemento(mDataContainer.mCurSelectShape.createDrawDataMemento(DrawDataMemento.DELETE, this));
             }
 
@@ -188,6 +194,7 @@ public class TouchManagerForSelectStatus extends BaseTouchManager {
                 || mDataContainer.photoScaleRectLB.contains(downPoint[0], (int) downPoint[1])) {
             if (mDataContainer.mCurSelectPhoto != null) {
                 //添加一条备忘录
+                mStepControler.removeUndoListItemsAfterCurIndex();
                 mStepControler.addMemento(mDataContainer.mCurSelectPhoto.createDrawDataMemento(DrawDataMemento.TRANSFORM, this));
             }
             actionMode = PHOTO_ACTION_SCALE;
@@ -197,6 +204,7 @@ public class TouchManagerForSelectStatus extends BaseTouchManager {
         if (mDataContainer.photoDeleteRectRU.contains(downPoint[0], (int) downPoint[1])) {
             if (mDataContainer.mCurSelectPhoto != null) {
                 //添加一条备忘录
+                mStepControler.removeUndoListItemsAfterCurIndex();
                 mStepControler.addMemento(mDataContainer.mCurSelectPhoto.createDrawDataMemento(DrawDataMemento.DELETE, this));
             }
 
@@ -210,6 +218,7 @@ public class TouchManagerForSelectStatus extends BaseTouchManager {
         if (mDataContainer.photoRotateRectRB.contains(downPoint[0], (int) downPoint[1])) {
             if (mDataContainer.mCurSelectPhoto != null) {
                 //添加一条备忘录
+                mStepControler.removeUndoListItemsAfterCurIndex();
                 mStepControler.addMemento(mDataContainer.mCurSelectPhoto.createDrawDataMemento(DrawDataMemento.TRANSFORM, this));
             }
             actionMode = PHOTO_ACTION_ROTATE;
@@ -219,6 +228,7 @@ public class TouchManagerForSelectStatus extends BaseTouchManager {
         if (mDataContainer.shapeRotateRectRB.contains(downPoint[0], (int) downPoint[1])) {
             if (mDataContainer.mCurSelectShape != null) {
                 //添加一条备忘录
+                mStepControler.removeUndoListItemsAfterCurIndex();
                 DrawDataMemento drawDataMemento = mDataContainer.mCurSelectShape.createDrawDataMemento(DrawDataMemento.TRANSFORM, this);
                 mStepControler.addMemento(drawDataMemento);
             }

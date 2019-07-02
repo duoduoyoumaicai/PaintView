@@ -220,6 +220,7 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
         drawPhoto.mMatrix.postTranslate(Util.getScreenSize(mContext).x / 2 - drawPhoto.bitmap.getWidth() * scale / 2,
                 Util.getScreenSize(mContext).y / 2 - drawPhoto.bitmap.getHeight() * scale / 2);
         //添加一条备忘录
+        mStepControler.removeUndoListItemsAfterCurIndex();
         mStepControler.addMemento(drawPhoto.createDrawDataMemento(DrawDataMemento.ADD, this));
         mDataContainer.curIndex = mDataContainer.mMementoList.size() - 1;//重置curIndex
         return drawPhoto;
