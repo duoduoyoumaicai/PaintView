@@ -141,9 +141,9 @@ public class DrawStepControler {
     }
 
     /**
-     * 移除curIndex之后的所有undoList的 item
+     * 移除curIndex之后的所有mMementoList的 item
      */
-    public void removeUndoListItemsAfterCurIndex() {
+    public void removeMementoListItemsAfterCurIndex() {
         int maxUndoListIndex = mDataContainer.mMementoList.size() - 1;
         if (mDataContainer.curIndex != maxUndoListIndex) {//移除curIndex之后的所有历史记录
             int index = maxUndoListIndex;

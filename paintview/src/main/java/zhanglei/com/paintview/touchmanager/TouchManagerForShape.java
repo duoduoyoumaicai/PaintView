@@ -46,7 +46,7 @@ public class TouchManagerForShape extends BaseTouchManager {
 
         //几何数据添加至备忘录
         if (null != mDataContainer.mCurDrawShape) {
-            mStepControler.removeUndoListItemsAfterCurIndex();
+            mStepControler.removeMementoListItemsAfterCurIndex();
             mStepControler.addMemento(mDataContainer.mCurDrawShape.createDrawDataMemento(DrawDataMemento.ADD, this));
             mDataContainer.curIndex = mDataContainer.mMementoList.size() - 1;//更新curIndex至数组末尾
         }
