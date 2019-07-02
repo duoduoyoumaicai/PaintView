@@ -223,6 +223,9 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
         mStepControler.removeMementoListItemsAfterCurIndex();
         mStepControler.addMemento(drawPhoto.createDrawDataMemento(DrawDataMemento.ADD, this));
         mDataContainer.curIndex = mDataContainer.mMementoList.size() - 1;//重置curIndex
+        if (getOnIndexChangedListener() != null) {
+            getOnIndexChangedListener().onIndexChanged(mDataContainer.curIndex, mDataContainer.mMementoList.size());
+        }
         return drawPhoto;
     }
 
@@ -638,6 +641,9 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
         setDrawType(PEN);
         mDataContainer.clear();
         renewPaintView();
+        if (getOnIndexChangedListener() != null) {
+            getOnIndexChangedListener().onIndexChanged(mDataContainer.curIndex, mDataContainer.mMementoList.size());
+        }
         invalidate();
     }
 
@@ -703,5 +709,53 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
     @Override
     public void addIndex() {
         mDataContainer.curIndex++;
+        if (getOnIndexChangedListener() != null) {
+            getOnIndexChangedListener().onIndexChanged(mDataContainer.curIndex, mDataContainer.mMementoList.size());
+        }
+    }
+
+    private OnIndexChangedListener mOnIndexChangedListener = new OnIndexChangedListener() {
+        @Override
+        public void onIndexChanged(int curIndex, int listSize) {
+            if (null != mOnReDoUnDoStatusChangedListener) {
+                boolean canReDo, canUnDo;
+                if (listSize > 0) {
+                    if (curIndex < listSize - 1) {//可以重做
+                        canReDo = true;
+                    } else {//不可以重做
+                        canReDo = false;
+                    }
+                    if (curIndex >= 0) {//可以撤销
+                        canUnDo = true;
+                    } else {//不可以撤销
+                        canUnDo = false;
+                    }
+                } else {//不可以撤销也不可以重做
+                    canReDo = false;
+                    canUnDo = false;
+                }
+
+                mOnReDoUnDoStatusChangedListener.onReDoUnDoStatusChanged(canReDo, canUnDo);
+            }
+        }
+    };
+
+
+    public OnIndexChangedListener getOnIndexChangedListener() {
+        return mOnIndexChangedListener;
+    }
+
+    public interface OnIndexChangedListener {
+        void onIndexChanged(int curIndex, int listSize);
+    }
+
+    private OnReDoUnDoStatusChangedListener mOnReDoUnDoStatusChangedListener;
+
+    public void setOnReDoUnDoStatusChangedListener(OnReDoUnDoStatusChangedListener mOnReDoUnDoStatusChangedListener) {
+        this.mOnReDoUnDoStatusChangedListener = mOnReDoUnDoStatusChangedListener;
+    }
+
+    public interface OnReDoUnDoStatusChangedListener {
+        void onReDoUnDoStatusChanged(boolean canReDo, boolean canUnDo);
     }
 }

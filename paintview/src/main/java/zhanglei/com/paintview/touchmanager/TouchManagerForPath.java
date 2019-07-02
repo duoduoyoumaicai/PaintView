@@ -33,7 +33,9 @@ public class TouchManagerForPath extends BaseTouchManager {
         mStepControler.removeMementoListItemsAfterCurIndex();
         mStepControler.addMemento(drawPathData.createDrawDataMemento(DrawDataMemento.ADD, this));
         mDataContainer.curIndex = mDataContainer.mMementoList.size() - 1;//更新curIndex至数组末尾
-
+        if (mPaintView.getOnIndexChangedListener() != null) {
+            mPaintView.getOnIndexChangedListener().onIndexChanged(mDataContainer.curIndex, mDataContainer.mMementoList.size());
+        }
         //重置mPath
         mDataContainer.mTempPath.reset();
     }

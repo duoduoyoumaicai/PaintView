@@ -86,14 +86,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="5dp"
-                android:src="@mipmap/icon_undo_icon" />
+                android:src="@mipmap/icon_undo" />
 
             <ImageView
                 android:id="@+id/iv_redo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="5dp"
-                android:src="@mipmap/icon_redo_icon" />
+                android:src="@mipmap/icon_redo" />
 
         </LinearLayout>
 

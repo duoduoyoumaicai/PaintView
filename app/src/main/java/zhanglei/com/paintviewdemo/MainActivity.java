@@ -9,6 +9,7 @@ import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.ImageView;
 
 import java.io.IOException;
 
@@ -20,6 +21,8 @@ public class MainActivity extends AppCompatActivity implements IPaintColorOrWidt
     private PaintView paintView;
     private final int PHOTO = 0x100;
     private ToolbarColorSelectPopupWindow colorSelectPopup;
+    private ImageView ivUndo;
+    private ImageView ivRedo;
 
 
     @Override
@@ -30,6 +33,8 @@ public class MainActivity extends AppCompatActivity implements IPaintColorOrWidt
         paintView = findViewById(R.id.paintView);
         colorSelectPopup = new ToolbarColorSelectPopupWindow(this);
         colorSelectPopup.setPaintColorOrWidthListener(this);
+        ivUndo = findViewById(R.id.iv_undo);
+        ivRedo = findViewById(R.id.iv_redo);
 
         findViewById(R.id.btn_select_eraser).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,16 +99,31 @@ public class MainActivity extends AppCompatActivity implements IPaintColorOrWidt
                 }
             }
         });
-        findViewById(R.id.iv_undo).setOnClickListener(new View.OnClickListener() {
+        ivUndo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 paintView.undo();
             }
         });
-        findViewById(R.id.iv_redo).setOnClickListener(new View.OnClickListener() {
+        ivRedo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 paintView.redo();
+            }
+        });
+        paintView.setOnReDoUnDoStatusChangedListener(new PaintView.OnReDoUnDoStatusChangedListener() {
+            @Override
+            public void onReDoUnDoStatusChanged(boolean canReDo, boolean canUnDo) {
+                if (canReDo) {
+                    ivRedo.setImageResource(R.mipmap.icon_redo);
+                } else {
+                    ivRedo.setImageResource(R.mipmap.icon_redo_gray);
+                }
+                if (canUnDo) {
+                    ivUndo.setImageResource(R.mipmap.icon_undo);
+                } else {
+                    ivUndo.setImageResource(R.mipmap.icon_undo_gray);
+                }
             }
         });
 

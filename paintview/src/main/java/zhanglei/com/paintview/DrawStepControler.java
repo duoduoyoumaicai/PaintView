@@ -79,7 +79,9 @@ public class DrawStepControler {
             }
             mPaintView.invalidate();
             mDataContainer.curIndex--;
-
+            if (mPaintView.getOnIndexChangedListener() != null) {
+                mPaintView.getOnIndexChangedListener().onIndexChanged(mDataContainer.curIndex, mDataContainer.mMementoList.size());
+            }
         }
     }
 
@@ -136,6 +138,9 @@ public class DrawStepControler {
 
             mPaintView.invalidate();
             mDataContainer.curIndex++;//处理shape ,photo的备忘录索引逻辑
+            if (mPaintView.getOnIndexChangedListener() != null) {
+                mPaintView.getOnIndexChangedListener().onIndexChanged(mDataContainer.curIndex, mDataContainer.mMementoList.size());
+            }
         }
 
     }

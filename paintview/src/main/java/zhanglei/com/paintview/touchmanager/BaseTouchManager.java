@@ -75,5 +75,8 @@ public abstract class BaseTouchManager implements DrawDataMemento.onAddIndexList
     public void addIndex() {
         if (null == mDataContainer) return;
         mDataContainer.curIndex++;
+        if (mPaintView.getOnIndexChangedListener() != null) {
+            mPaintView.getOnIndexChangedListener().onIndexChanged(mDataContainer.curIndex, mDataContainer.mMementoList.size());
+        }
     }
 }
