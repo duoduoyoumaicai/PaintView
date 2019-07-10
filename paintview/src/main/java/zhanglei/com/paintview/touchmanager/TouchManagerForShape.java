@@ -11,6 +11,8 @@ import zhanglei.com.paintview.DrawTypeEnum;
 import zhanglei.com.paintview.bean.DrawDataMemento;
 import zhanglei.com.paintview.bean.DrawShapeData;
 
+import static zhanglei.com.paintview.PaintViewDrawDataContainer.SCALE_MIN_LEN;
+
 
 /**
  * 类名称：TouchManagerForShape
@@ -31,9 +33,6 @@ public class TouchManagerForShape extends BaseTouchManager {
     private float endX = 0;
 
     private float endY = 0;
-
-    public static float SCALE_MIN_LEN = 50;//几何图形外接矩形最小宽高尺寸(px)
-
 
     @Override
     protected void onTouchUp(MotionEvent event) {

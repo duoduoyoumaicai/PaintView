@@ -29,6 +29,8 @@ import zhanglei.com.paintview.touchmanager.PaintViewAttacher;
 import static zhanglei.com.paintview.DrawTypeEnum.ERASER;
 import static zhanglei.com.paintview.DrawTypeEnum.PEN;
 import static zhanglei.com.paintview.DrawTypeEnum.SELECT_STATUS;
+import static zhanglei.com.paintview.PaintViewDrawDataContainer.DEFAULT_PHOTO_HEIGHT;
+import static zhanglei.com.paintview.PaintViewDrawDataContainer.SCALE_MAX;
 
 
 /**
@@ -86,8 +88,6 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
     private boolean isSelectShape;//选择了几何图形
 
     private Paint mBoardPaint = null;//画图片的边线
-
-    private static final float DEFAULT_PHOTO_HEIGHT = 400.00F;//图片默认显示高度
 
     private DrawStepControler mStepControler;
 
@@ -233,6 +233,7 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
         } else {
             scale = DEFAULT_PHOTO_HEIGHT / drawPhoto.bitmap.getHeight();
         }
+        scale = scale > SCALE_MAX ? SCALE_MAX : scale;//如果计算出的放大系数大于了最大放大系数,就取最大放大系数为实际放大系数
         drawPhoto.mMatrix.postScale(scale, scale);
         drawPhoto.mMatrix.postTranslate(mWidth / 2 - drawPhoto.bitmap.getWidth() * scale / 2,
                 mHeight / 2 - drawPhoto.bitmap.getHeight() * scale / 2);

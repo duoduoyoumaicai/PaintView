@@ -10,7 +10,9 @@ import zhanglei.com.paintview.bean.DrawPhotoData;
 import zhanglei.com.paintview.bean.DrawShapeData;
 import zhanglei.com.paintview.bean.TransformData;
 
-import static zhanglei.com.paintview.touchmanager.TouchManagerForShape.SCALE_MIN_LEN;
+import static zhanglei.com.paintview.PaintViewDrawDataContainer.SCALE_MAX;
+import static zhanglei.com.paintview.PaintViewDrawDataContainer.SCALE_MIN;
+import static zhanglei.com.paintview.PaintViewDrawDataContainer.SCALE_MIN_LEN;
 
 /**
  * 类名称：TouchManagerForSelectStatus
@@ -23,10 +25,6 @@ import static zhanglei.com.paintview.touchmanager.TouchManagerForShape.SCALE_MIN
  */
 
 public class TouchManagerForSelectStatus extends BaseTouchManager {
-
-    private static float SCALE_MAX = 4.0f;//最大缩放倍数
-
-    private static float SCALE_MIN = 0.2f;//最小缩放倍数
 
     private static final int SHAPE_ACTION_DRAG = 4;
 

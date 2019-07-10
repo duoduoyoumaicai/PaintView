@@ -75,6 +75,15 @@ public class PaintViewDrawDataContainer {
 
     public RectF shapeDeleteRectRU;//删除标记边界,矩形大小按照图片原大小,右上
 
+    public static float SCALE_MAX = 4.0f;//最大缩放倍数
+
+    public static float SCALE_MIN = 0.2f;//最小缩放倍数
+
+    public static final float DEFAULT_PHOTO_HEIGHT = 400.00F;//图片默认显示高度
+
+    public static float SCALE_MIN_LEN = 50;//几何图形外接矩形最小宽高尺寸(px)
+
+
     public PaintViewDrawDataContainer(PaintView paintView) {
         mTempPath = new Path();
         mDrawPhotoList = new CopyOnWriteArrayList<>();
