@@ -22,6 +22,10 @@ allprojects {
   ```
   * 1.2之前的版本为预发布版本,部分功能无法使用,请直接引用1.2版本
   * 1.3版本增加撤销重做功能
+  * 1.4版本增加添加全屏图片功能
+    1.4.1如果高度先撑满,就按高度等比缩放
+    1.4.2如果宽度先撑满,就按宽度等比缩放
+    1.4.3对图片的放大倍数不能大于4倍,如果大于了4倍则不按全屏倍数方大而按4倍等比缩放
   
   # 使用方式
    * 在xml布局文件中引入PaintView
@@ -64,6 +68,7 @@ paintView.setDrawType(DrawTypeEnum.LINE);
 * 添加图片
 ```
  paintView.addPhotoByBitmap(bitmap);
+ paintView.addPhotoByBitmap(bitmap,true);//添加全屏图片
 ```
 * 撤销
 ```
