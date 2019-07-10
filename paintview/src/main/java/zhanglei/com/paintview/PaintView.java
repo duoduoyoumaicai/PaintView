@@ -195,9 +195,19 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
      * @param sampleBM
      */
     public void addPhotoByBitmap(Bitmap sampleBM) {
+        addPhotoByBitmap(sampleBM, false);
+    }
+
+    /**
+     * 将Bitmap封装成MCDrawPhoto,
+     *
+     * @param sampleBM
+     * @param isFullScreen 是否全屏
+     */
+    public void addPhotoByBitmap(Bitmap sampleBM, boolean isFullScreen) {
         setDrawType(SELECT_STATUS);
         if (sampleBM != null) {
-            DrawPhotoData newRecord = initDrawPhoto(sampleBM);
+            DrawPhotoData newRecord = initDrawPhoto(sampleBM, isFullScreen);
             setCurSelectPhoto(newRecord);
         }
     }
@@ -206,19 +216,26 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
      * 将图片Bitmap封装成MCDrawPhoto
      *
      * @param bitmap
+     * @param isFullScreen 是否全屏
      * @return
      */
-    private DrawPhotoData initDrawPhoto(Bitmap bitmap) {
+    private DrawPhotoData initDrawPhoto(Bitmap bitmap, boolean isFullScreen) {
         final DrawPhotoData drawPhoto = new DrawPhotoData();
         drawPhoto.bitmap = bitmap;
         drawPhoto.mRectSrc = new RectF(0, 0, drawPhoto.bitmap.getWidth(), drawPhoto.bitmap.getHeight());
         drawPhoto.mMatrix = new Matrix();
         //将图片调整到合适大小
-        final float scale = DEFAULT_PHOTO_HEIGHT / drawPhoto.bitmap.getHeight();
+        float scale;
+        if (isFullScreen) {
+            float scaleH = (mWidth - 50) / Float.valueOf(drawPhoto.bitmap.getWidth());//横向满屏边距25px,需要方大倍数
+            float scaleV = (mHeight - 50) / Float.valueOf(drawPhoto.bitmap.getHeight());//竖向满屏边距25px,需要方大倍数
+            scale = scaleH > scaleV ? scaleV : scaleH;
+        } else {
+            scale = DEFAULT_PHOTO_HEIGHT / drawPhoto.bitmap.getHeight();
+        }
         drawPhoto.mMatrix.postScale(scale, scale);
-
-        drawPhoto.mMatrix.postTranslate(Util.getScreenSize(mContext).x / 2 - drawPhoto.bitmap.getWidth() * scale / 2,
-                Util.getScreenSize(mContext).y / 2 - drawPhoto.bitmap.getHeight() * scale / 2);
+        drawPhoto.mMatrix.postTranslate(mWidth / 2 - drawPhoto.bitmap.getWidth() * scale / 2,
+                mHeight / 2 - drawPhoto.bitmap.getHeight() * scale / 2);
         //添加一条备忘录
         mStepControler.removeMementoListItemsAfterCurIndex();
         mStepControler.addMemento(drawPhoto.createDrawDataMemento(DrawDataMemento.ADD, this));
