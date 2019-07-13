@@ -42,8 +42,11 @@ public class PaintViewAttacher implements View.OnTouchListener {
     public boolean onTouch(View v, MotionEvent event) {
         if (mPaintView == null || mPaintView.isInEditMode() || mPaintView.getPaintCanvas() == null
                 || mPaintView.getPaintBitmapRef() == null || mPaintView.getPaintBitmapRef().get() == null
-                || mPaintView.getDrawDataContainer() == null ) {
+                || mPaintView.getDrawDataContainer() == null) {
             return false;
+        }
+        if (event.getAction() == MotionEvent.ACTION_UP) {
+            mPaintView.setEdit(true);
         }
         switch (mPaintView.getDrawType()) {
             case PEN:

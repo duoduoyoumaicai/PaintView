@@ -91,6 +91,9 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
 
     private DrawStepControler mStepControler;
 
+    /* 标识，是否进行过绘制 */
+    private boolean isEdit = false;
+
     public PaintView(Context context) {
         this(context, null);
     }
@@ -648,9 +651,18 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
         return mStepControler;
     }
 
+    public boolean isEdit() {
+        return isEdit;
+    }
+
+    public void setEdit(boolean edit) {
+        isEdit = edit;
+    }
+
     //.....................................................各种set/get........................................................
 
     public void clear() {
+        isEdit = false;
         mDataContainer.curIndex = -1;
         isSelectPhoto = false;
         isSelectShape = false;
