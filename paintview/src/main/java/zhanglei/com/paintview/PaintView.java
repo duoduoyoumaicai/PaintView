@@ -684,7 +684,7 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
     }
 
     public void setPaintViewBg(Bitmap mPaintBg) {
-        mDataContainer.mPaintViewBgBitmap = mPaintBg.copy(mConfig, true);
+        mDataContainer.mPaintViewBgBitmap = mPaintBg;
         left = 0;
         top = 0;
         if (mWidth > 0) {
