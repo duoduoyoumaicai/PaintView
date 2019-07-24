@@ -10,6 +10,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <ImageView
+        android:id="@+id/iv"
+        android:layout_width="255dp"
+        android:layout_height="150dp"
+        android:layout_alignParentRight="true" />
+
     <ScrollView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -62,6 +68,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="添加图片" />
+
+            <Button
+                android:id="@+id/btn_add_bg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="添加背景" />
 
             <Button
                 android:id="@+id/btn_select"

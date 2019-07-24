@@ -47,8 +47,6 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
 
     private final String TAG = getClass().getSimpleName();
 
-    private Context mContext;
-
     private DrawTypeEnum mDrawType = DrawTypeEnum.PEN;//画板当前的绘制类型
 
     private int mWidth, mHeight;//当前view的宽度和高度
@@ -73,7 +71,11 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
 
     private Canvas mPaintCanvas;
 
-    private Reference<Bitmap> mPaintBitmapRef;
+    private Reference<Bitmap> mPaintViewBitmapRef;//绘制内容
+
+    private int left = 0; // 背景的left
+
+    private int top = 0; // 背景的top
 
     private Bitmap.Config mConfig = Bitmap.Config.ARGB_4444;
 
@@ -104,7 +106,6 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
 
     public PaintView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        mContext = context;
         init();
     }
 
@@ -137,6 +138,8 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
     @Override
     protected void onDraw(Canvas canvas) {
         if (null == mDataContainer) return;
+        drawBg(canvas);//画背景
+
         drawPhoto(canvas);//画添加到画板中的图片
 
         drawTemp(canvas);//画笔移动过程的曲线和几何图形
@@ -169,7 +172,7 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
             this.mWidth = this.getWidth();
             this.mHeight = this.getHeight();
         }
-        if ((mPaintBitmapRef == null || mPaintBitmapRef.get() == null)) {
+        if ((mPaintViewBitmapRef == null || mPaintViewBitmapRef.get() == null)) {
             initPaintCanvas();
         }
     }
@@ -178,18 +181,29 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
 
         if (this.mWidth > 0 && this.mHeight > 0) {
             Bitmap bitmap = Bitmap.createBitmap(this.mWidth, this.mHeight, this.mConfig);
-            this.mPaintBitmapRef = new SoftReference<>(bitmap);
+            this.mPaintViewBitmapRef = new SoftReference<>(bitmap);
         }
 
-        if (this.mPaintBitmapRef != null && mPaintBitmapRef.get() != null) {
+        if (this.mPaintViewBitmapRef != null && mPaintViewBitmapRef.get() != null) {
             try {
-                mPaintCanvas = new Canvas(mPaintBitmapRef.get());
+                mPaintCanvas = new Canvas(mPaintViewBitmapRef.get());
             } catch (Exception e) {
-                Log.e(TAG, "mPaintBitmapRef.get() == null");
+                Log.e(TAG, "mPaintViewBitmapRef.get() == null");
             }
             this.invalidate();
         }
 
+    }
+
+    /**
+     * 绘制背景
+     *
+     * @param canvas
+     */
+    private void drawBg(Canvas canvas) {
+        if (null != mDataContainer.mPaintViewBgBitmap) {
+            canvas.drawBitmap(mDataContainer.mPaintViewBgBitmap, left, top, null);
+        }
     }
 
     /**
@@ -448,8 +462,8 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
      * @param canvas
      */
     private void drawFinalPath(Canvas canvas) {
-        if (mPaintBitmapRef != null && mPaintBitmapRef.get() != null) {
-            canvas.drawBitmap(mPaintBitmapRef.get(), mBaseMatrix, null);
+        if (mPaintViewBitmapRef != null && mPaintViewBitmapRef.get() != null) {
+            canvas.drawBitmap(mPaintViewBitmapRef.get(), mBaseMatrix, null);
         }
     }
 
@@ -485,8 +499,18 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
      * @return
      */
     public Bitmap getPaintViewScreen() {
+        return getPaintViewScreen(mConfig);
+    }
+
+    /**
+     * 获取PaintView的整体截图
+     *
+     * @param config
+     * @return
+     */
+    public Bitmap getPaintViewScreen(Bitmap.Config config) {
         clearSelected();
-        Bitmap res = Bitmap.createBitmap(this.getWidth(), this.getHeight(), Bitmap.Config.ARGB_4444);
+        Bitmap res = Bitmap.createBitmap(this.getWidth(), this.getHeight(), config);
         Canvas canvas = new Canvas(res);
         this.draw(canvas);
         return res;
@@ -618,7 +642,7 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
     }
 
     public Reference<Bitmap> getPaintBitmapRef() {
-        return mPaintBitmapRef;
+        return mPaintViewBitmapRef;
     }
 
     public PaintViewDrawDataContainer getDrawDataContainer() {
@@ -659,6 +683,19 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
         isEdit = edit;
     }
 
+    public void setPaintViewBg(Bitmap mPaintBg) {
+        mDataContainer.mPaintViewBgBitmap = mPaintBg.copy(mConfig, true);
+        left = 0;
+        top = 0;
+        if (mWidth > 0) {
+            left = (mWidth - mPaintBg.getWidth()) / 2;
+        }
+        if (mHeight > 0) {
+            top = (mHeight - mPaintBg.getHeight()) / 2;
+        }
+        invalidate();
+    }
+
     //.....................................................各种set/get........................................................
 
     public void clear() {
@@ -685,28 +722,28 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
             return;
         }
 
-        if (mPaintBitmapRef != null && mPaintBitmapRef.get() != null) {
+        if (mPaintViewBitmapRef != null && mPaintViewBitmapRef.get() != null) {
             if (mPaintCanvas == null) {
                 try {
-                    mPaintCanvas = new Canvas(mPaintBitmapRef.get());
+                    mPaintCanvas = new Canvas(mPaintViewBitmapRef.get());
                 } catch (Exception e) {
-                    Log.e(TAG, "mPaintBitmapRef.get() == null");
+                    Log.e(TAG, "mPaintViewBitmapRef.get() == null");
                 }
             }
             if (mPaintCanvas != null)
                 mPaintCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
         } else {
             Bitmap bitmap = Bitmap.createBitmap(getPaintBitmapWidth(), getPaintBitmapHeight(), mConfig);
-            if (null == mPaintBitmapRef) {
-                mPaintBitmapRef = new SoftReference<>(bitmap);
+            if (null == mPaintViewBitmapRef) {
+                mPaintViewBitmapRef = new SoftReference<>(bitmap);
             } else {
-                mPaintBitmapRef.clear();
-                mPaintBitmapRef = new SoftReference<>(bitmap);
+                mPaintViewBitmapRef.clear();
+                mPaintViewBitmapRef = new SoftReference<>(bitmap);
             }
             try {
-                mPaintCanvas = new Canvas(mPaintBitmapRef.get());
+                mPaintCanvas = new Canvas(mPaintViewBitmapRef.get());
             } catch (Exception e) {
-                Log.e(TAG, "mPaintBitmapRef.get() == null");
+                Log.e(TAG, "mPaintViewBitmapRef.get() == null");
             }
         }
     }
@@ -716,9 +753,9 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
      */
     private void recycleAllBitmap() {
         mPaintCanvas = null;
-        if (mPaintBitmapRef != null) {
-            mPaintBitmapRef.clear();
-            mPaintBitmapRef = null;
+        if (mPaintViewBitmapRef != null) {
+            mPaintViewBitmapRef.clear();
+            mPaintViewBitmapRef = null;
         }
         if (mRushIconBitmap != null) {
             mRushIconBitmap.recycle();

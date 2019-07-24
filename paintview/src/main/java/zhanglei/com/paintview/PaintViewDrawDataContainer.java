@@ -31,6 +31,8 @@ public class PaintViewDrawDataContainer {
 
     public float mCurX, mCurY;//用来做贝塞尔曲线的临时坐标
 
+    public Bitmap mPaintViewBgBitmap;//背景图片
+
     public CopyOnWriteArrayList<DrawPhotoData> mDrawPhotoList;//图片集合
 
     public CopyOnWriteArrayList<DrawShapeData> mDrawShapeList;//几何图形集合
@@ -107,16 +109,18 @@ public class PaintViewDrawDataContainer {
         shapeDeleteRectRU = new RectF(0, 0, deleteMarkBM.getWidth(), deleteMarkBM.getHeight());
     }
 
-    public void clearAndSetNull() {
+    public void clearAndSetNull() {//销毁数据
         clear();
         mTempPath = null;
         mDrawPhotoList = null;
         mDrawShapeList = null;
         mMementoList = null;
         mDrawPathList = null;
+        mPaintViewBgBitmap.recycle();
+        mPaintViewBgBitmap = null;
     }
 
-    public void clear() {
+    public void clear() {//清空数据,背景图不清空
 
         if (null != mDrawPhotoList) {
             mDrawPhotoList.clear();
