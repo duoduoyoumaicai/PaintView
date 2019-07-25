@@ -105,7 +105,8 @@ public class MainActivity extends AppCompatActivity implements IPaintColorOrWidt
             @Override
             public void onClick(View v) {
                 Bitmap bitmap = paintView.getPaintViewScreen(Bitmap.Config.ARGB_4444);
-                iv.setImageBitmap(bitmap);
+                Util.bitmap2File(MainActivity.this,bitmap);
+//                iv.setImageBitmap(bitmap);
             }
         });
         ivUndo.setOnClickListener(new View.OnClickListener() {

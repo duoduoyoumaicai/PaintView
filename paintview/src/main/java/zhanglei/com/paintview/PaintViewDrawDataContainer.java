@@ -7,6 +7,7 @@ import android.graphics.RectF;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import zhanglei.com.paintview.bean.DrawBgData;
 import zhanglei.com.paintview.bean.DrawDataMemento;
 import zhanglei.com.paintview.bean.DrawPathData;
 import zhanglei.com.paintview.bean.DrawPhotoData;
@@ -31,7 +32,7 @@ public class PaintViewDrawDataContainer {
 
     public float mCurX, mCurY;//用来做贝塞尔曲线的临时坐标
 
-    public Bitmap mPaintViewBgBitmap;//背景图片
+    public DrawBgData mPaintViewBg;//背景图片
 
     public CopyOnWriteArrayList<DrawPhotoData> mDrawPhotoList;//图片集合
 
@@ -116,8 +117,8 @@ public class PaintViewDrawDataContainer {
         mDrawShapeList = null;
         mMementoList = null;
         mDrawPathList = null;
-        mPaintViewBgBitmap.recycle();
-        mPaintViewBgBitmap = null;
+        mPaintViewBg.bitmap.recycle();
+        mPaintViewBg = null;
     }
 
     public void clear() {//清空数据,背景图不清空

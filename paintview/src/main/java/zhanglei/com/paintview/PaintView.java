@@ -21,6 +21,7 @@ import android.view.ViewTreeObserver;
 import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
 
+import zhanglei.com.paintview.bean.DrawBgData;
 import zhanglei.com.paintview.bean.DrawDataMemento;
 import zhanglei.com.paintview.bean.DrawPhotoData;
 import zhanglei.com.paintview.bean.DrawShapeData;
@@ -201,8 +202,8 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
      * @param canvas
      */
     private void drawBg(Canvas canvas) {
-        if (null != mDataContainer.mPaintViewBgBitmap) {
-            canvas.drawBitmap(mDataContainer.mPaintViewBgBitmap, left, top, null);
+        if (null != mDataContainer.mPaintViewBg && null != mDataContainer.mPaintViewBg.bitmap) {
+            canvas.drawBitmap(mDataContainer.mPaintViewBg.bitmap, mDataContainer.mPaintViewBg.mMatrix, null);
         }
     }
 
@@ -684,15 +685,20 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
     }
 
     public void setPaintViewBg(Bitmap mPaintBg) {
-        mDataContainer.mPaintViewBgBitmap = mPaintBg;
-        left = 0;
-        top = 0;
-        if (mWidth > 0) {
-            left = (mWidth - mPaintBg.getWidth()) / 2;
-        }
-        if (mHeight > 0) {
-            top = (mHeight - mPaintBg.getHeight()) / 2;
-        }
+        DrawBgData drawBgData = new DrawBgData();
+        drawBgData.bitmap = mPaintBg;
+        drawBgData.mMatrix = new Matrix();
+        mDataContainer.mPaintViewBg = drawBgData;
+
+        //将图片调整到合适大小
+        float scaleH = (mWidth - 50) / Float.valueOf(drawBgData.bitmap.getWidth());//横向满屏边距25px,需要方大倍数
+        float scaleV = (mHeight - 50) / Float.valueOf(drawBgData.bitmap.getHeight());//竖向满屏边距25px,需要方大倍数
+        float scale = scaleH > scaleV ? scaleV : scaleH;
+        scale = scale > SCALE_MAX ? SCALE_MAX : scale;//如果计算出的放大系数大于了最大放大系数,就取最大放大系数为实际放大系数
+        drawBgData.mMatrix.postScale(scale, scale);
+        drawBgData.mMatrix.postTranslate(mWidth / 2 - drawBgData.bitmap.getWidth() * scale / 2,
+                mHeight / 2 - drawBgData.bitmap.getHeight() * scale / 2);
+
         invalidate();
     }
 

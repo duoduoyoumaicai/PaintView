@@ -10,14 +10,21 @@ import android.graphics.PointF;
 import android.graphics.RectF;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
+import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.WindowManager;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import zhanglei.com.paintview.bean.TransformData;
 
@@ -175,6 +182,80 @@ public class Util {
      */
     public static double getVectorLength(PointF vector) {
         return Math.sqrt(vector.x * vector.x + vector.y * vector.y);
+    }
+
+    public static File bitmap2File(Context context, Bitmap bitmap) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
+        Date date = new Date(System.currentTimeMillis());
+        //图片名
+        String filename = format.format(date);
+
+        File file = new File(getFileSavePath(context), filename + ".png");
+        try {
+            FileOutputStream fos = new FileOutputStream(file);
+            try {
+                if (bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos)) {
+                    fos.flush();
+                    fos.close();
+                }
+            } catch (IOException e) {
+
+                e.printStackTrace();
+            }
+        } catch (FileNotFoundException e) {
+
+            e.printStackTrace();
+        }
+
+        return file;
+    }
+
+    /**
+     * 是否挂载sd卡
+     *
+     * @return
+     */
+    public static boolean existExternalStorage() {
+        return Environment.getExternalStorageState().equalsIgnoreCase(Environment.MEDIA_MOUNTED);
+    }
+
+
+    public static String getFileSavePath(Context context) {
+        String fileSavePath = "";
+        try {
+            String appPath = null;
+            // 存在SDCARD的时候，路径设置到SDCARD
+            if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
+                File appFilesDir = context.getExternalFilesDir(null);
+                if (appFilesDir != null) {
+                    appPath = appFilesDir.getPath();
+                }
+            } else {
+                // 不存在SDCARD的时候
+                Log.d("getFileSavePath","sd卡不可用");
+            }
+            if (appPath == null) {
+                appPath = context.getFilesDir().getPath();
+            }
+            String tempSavePath = appPath + "/paintviewdemo/file";
+            File mFile = new File(tempSavePath);
+            if (!mFile.exists()) {
+                mFile.mkdirs();
+            }
+            fileSavePath = tempSavePath;
+        } catch (Exception error) {
+            try {
+                if (fileSavePath != null && !fileSavePath.equals("")) {
+                    File tempSaveFile = new File(fileSavePath);
+                    if (!tempSaveFile.exists()) {
+                        tempSaveFile.mkdirs();
+                    }
+                }
+            } catch (Exception e) {
+                fileSavePath = "";
+            }
+        }
+        return fileSavePath;
     }
 
 }
