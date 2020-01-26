@@ -179,6 +179,8 @@ public class TouchManagerForSelectStatus extends BaseTouchManager {
                 //添加一条备忘录
                 mStepControler.removeMementoListItemsAfterCurIndex();
                 mStepControler.addMemento(mDataContainer.mCurSelectShape.createDrawDataMemento(DrawDataMemento.DELETE, this));
+                if (null != mOnDeleteListener)
+                    mOnDeleteListener.onShapeDelete();
             }
 
             mDataContainer.mDrawShapeList.remove(mDataContainer.mCurSelectShape);
@@ -204,6 +206,8 @@ public class TouchManagerForSelectStatus extends BaseTouchManager {
                 //添加一条备忘录
                 mStepControler.removeMementoListItemsAfterCurIndex();
                 mStepControler.addMemento(mDataContainer.mCurSelectPhoto.createDrawDataMemento(DrawDataMemento.DELETE, this));
+                if (null != mOnDeleteListener)
+                    mOnDeleteListener.onPhotoDelete();
             }
 
             mDataContainer.mDrawPhotoList.remove(mDataContainer.mCurSelectPhoto);
@@ -446,4 +450,9 @@ public class TouchManagerForSelectStatus extends BaseTouchManager {
         }
     }
 
+    private PaintViewAttacher.OnDeleteListener mOnDeleteListener;
+
+    public void setOnDeleteListener(PaintViewAttacher.OnDeleteListener mOnDeleteListener) {
+        this.mOnDeleteListener = mOnDeleteListener;
+    }
 }

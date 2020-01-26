@@ -20,6 +20,7 @@ import android.view.ViewTreeObserver;
 
 import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import zhanglei.com.paintview.bean.DrawBgData;
 import zhanglei.com.paintview.bean.DrawDataMemento;
@@ -133,6 +134,7 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
                 R.drawable.icon_rush_bg).copy(mConfig, true), (int) mRushPaintWidth);
 
         mPaintViewAttacher = new PaintViewAttacher();
+        mPaintViewAttacher.setOnDeleteListener(mOnDeleteListener);
         mPaintViewAttacher.attach(this);
     }
 
@@ -213,7 +215,11 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
      * @param sampleBM
      */
     public void addPhotoByBitmap(Bitmap sampleBM) {
-        addPhotoByBitmap(sampleBM, false);
+        addPhotoByBitmap(sampleBM, false, null);
+    }
+
+    public void addPhotoByBitmap(Bitmap sampleBM, Object flag) {
+        addPhotoByBitmap(sampleBM, false, flag);
     }
 
     /**
@@ -223,9 +229,14 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
      * @param isFullScreen 是否全屏
      */
     public void addPhotoByBitmap(Bitmap sampleBM, boolean isFullScreen) {
+        addPhotoByBitmap(sampleBM, isFullScreen, null);
+    }
+
+    public void addPhotoByBitmap(Bitmap sampleBM, boolean isFullScreen, Object flag) {
         setDrawType(SELECT_STATUS);
         if (sampleBM != null) {
             DrawPhotoData newRecord = initDrawPhoto(sampleBM, isFullScreen);
+            newRecord.flag = flag;
             setCurSelectPhoto(newRecord);
         }
     }
@@ -527,7 +538,12 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
         mStepControler.redo();
     }
 
-    //.....................................................各种set/get........................................................
+    private PaintViewAttacher.OnDeleteListener mOnDeleteListener;
+
+    public void setOnDeleteListener(PaintViewAttacher.OnDeleteListener mOnDeleteListener) {
+        this.mOnDeleteListener = mOnDeleteListener;
+    }
+    //.....................................................各种set/get......start..................................................
 
     public DrawTypeEnum getDrawType() {
         return mDrawType;
@@ -702,7 +718,10 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
         invalidate();
     }
 
-    //.....................................................各种set/get........................................................
+    public CopyOnWriteArrayList<DrawPhotoData> getDrawPhotoData(){
+        return mDataContainer.mDrawPhotoList;
+    }
+    //.....................................................各种set/get.........end...............................................
 
     public void clear() {
         isEdit = false;

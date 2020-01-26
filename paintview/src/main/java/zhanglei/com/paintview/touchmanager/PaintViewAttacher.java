@@ -35,6 +35,7 @@ public class PaintViewAttacher implements View.OnTouchListener {
         touchManagerForShape = new TouchManagerForShape();
         touchManagerForShape.attach(mPaintView);
         touchManagerForSelectStatus = new TouchManagerForSelectStatus();
+        touchManagerForSelectStatus.setOnDeleteListener(mOnDeleteListener);
         touchManagerForSelectStatus.attach(mPaintView);
     }
 
@@ -75,6 +76,18 @@ public class PaintViewAttacher implements View.OnTouchListener {
         if (null != touchManagerForSelectStatus) {
             touchManagerForSelectStatus.detach();
         }
+    }
+
+    private OnDeleteListener mOnDeleteListener;
+
+    public void setOnDeleteListener(OnDeleteListener mOnDeleteListener) {
+        this.mOnDeleteListener = mOnDeleteListener;
+    }
+
+    public interface OnDeleteListener {
+        void onPhotoDelete();
+
+        void onShapeDelete();
     }
 
 }

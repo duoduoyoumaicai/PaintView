@@ -18,6 +18,8 @@ public class DrawPhotoData extends TransformData {
 
     private DrawDataMemento memento;
 
+    public Object flag;//预留flag,上层设置上层使用
+
     @Override
     public DrawDataMemento createDrawDataMemento(int doWhat, DrawDataMemento.onAddIndexListener onAddIndexListener) {
         Log.e("DrawPhotoData", "create Memoto cur restore data instance is " + this.toString());
