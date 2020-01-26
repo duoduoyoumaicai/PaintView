@@ -180,7 +180,7 @@ public class TouchManagerForSelectStatus extends BaseTouchManager {
                 mStepControler.removeMementoListItemsAfterCurIndex();
                 mStepControler.addMemento(mDataContainer.mCurSelectShape.createDrawDataMemento(DrawDataMemento.DELETE, this));
                 if (null != mOnDeleteListener)
-                    mOnDeleteListener.onShapeDelete();
+                    mOnDeleteListener.onShapeDelete(mDataContainer.mCurSelectShape);
             }
 
             mDataContainer.mDrawShapeList.remove(mDataContainer.mCurSelectShape);
@@ -207,7 +207,7 @@ public class TouchManagerForSelectStatus extends BaseTouchManager {
                 mStepControler.removeMementoListItemsAfterCurIndex();
                 mStepControler.addMemento(mDataContainer.mCurSelectPhoto.createDrawDataMemento(DrawDataMemento.DELETE, this));
                 if (null != mOnDeleteListener)
-                    mOnDeleteListener.onPhotoDelete();
+                    mOnDeleteListener.onPhotoDelete(mDataContainer.mCurSelectPhoto);
             }
 
             mDataContainer.mDrawPhotoList.remove(mDataContainer.mCurSelectPhoto);

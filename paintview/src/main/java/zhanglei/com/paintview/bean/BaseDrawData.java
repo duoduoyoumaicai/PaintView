@@ -11,6 +11,7 @@ package zhanglei.com.paintview.bean;
  */
 
 public class BaseDrawData {
+    public Object flag;//预留flag,上层设置上层使用
 
     /**
      * 创建备忘录的方法

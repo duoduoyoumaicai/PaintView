@@ -4,6 +4,8 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import zhanglei.com.paintview.PaintView;
+import zhanglei.com.paintview.bean.DrawPhotoData;
+import zhanglei.com.paintview.bean.DrawShapeData;
 
 
 /**
@@ -85,9 +87,9 @@ public class PaintViewAttacher implements View.OnTouchListener {
     }
 
     public interface OnDeleteListener {
-        void onPhotoDelete();
+        void onPhotoDelete(DrawPhotoData drawPhotoData);
 
-        void onShapeDelete();
+        void onShapeDelete(DrawShapeData drawShapeData);
     }
 
 }
