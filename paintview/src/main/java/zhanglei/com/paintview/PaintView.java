@@ -134,7 +134,6 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
                 R.drawable.icon_rush_bg).copy(mConfig, true), (int) mRushPaintWidth);
 
         mPaintViewAttacher = new PaintViewAttacher();
-        mPaintViewAttacher.setOnDeleteListener(mOnDeleteListener);
         mPaintViewAttacher.attach(this);
     }
 
@@ -538,10 +537,8 @@ public class PaintView extends View implements ViewTreeObserver.OnGlobalLayoutLi
         mStepControler.redo();
     }
 
-    private PaintViewAttacher.OnDeleteListener mOnDeleteListener;
-
-    public void setOnDeleteListener(PaintViewAttacher.OnDeleteListener mOnDeleteListener) {
-        this.mOnDeleteListener = mOnDeleteListener;
+    public void setOnDeleteListener(PaintViewAttacher.OnDeleteListener onDeleteListener) {
+        mPaintViewAttacher.setOnDeleteListener(onDeleteListener);
     }
     //.....................................................各种set/get......start..................................................
 
